@@ -23,6 +23,7 @@ export interface Moment {
 }
 
 export interface Clip {
+  duration?: any;
   id: string;
   name: string;
   secs: number;
@@ -34,6 +35,7 @@ export interface Clip {
   moments: Moment[];
   tones?: { name: string; v: number }[]; // what the voice carried, strongest first
   src?: string; // a real recording, when there is one
+  blob?: Blob;
 }
 
 export type Block =
@@ -198,8 +200,7 @@ export const CLIPS = {
     id: "c13",
     name: "A quieter kind of ambition.m4a",
     secs: 84,
-    transcript:
-      "I've been thinking about what I actually want from work. I keep saying I want to build something significant, but whenever I picture a good day, it isn't a launch or an announcement. It's a table with half-finished things on it, someone across from me making something completely different, and enough time to follow an idea without checking the clock. Maybe I don't want less ambition. Maybe I want ambition that leaves room for a life.",
+    transcript: "I've been thinking about what I actually want from work. I keep saying I want to build something significant, but whenever I picture a good day, it isn't a launch or an announcement. It's a table with half-finished things on it, someone across from me making something completely different, and enough time to follow an idea without checking the clock. Maybe I don't want less ambition. Maybe I want ambition that leaves room for a life.",
     energy: wave([0.52, 0.5, 0.46, 0.4, 0.34, 0.3, 0.31, 0.33, 0.36, 0.48, 0.62, 0.74, 0.8, 0.82, 0.78, 0.72, 0.66, 0.58, 0.44, 0.3, 0.18, 0.12, 0.28, 0.4, 0.46, 0.5]),
     pace: 126,
     pauses: 7,
@@ -214,13 +215,13 @@ export const CLIPS = {
       { t: 41, kind: "lift", phrase: "a table with half-finished things on it", note: "Pitch and pace came up together. The most alive 15 seconds of the clip." },
       { t: 69, kind: "pause", phrase: "for a life", note: "The longest pause, 2.6 seconds, right before the last three words." },
     ],
+    duration: undefined
   },
   big: {
     id: "c06",
     name: "Something big.m4a",
     secs: 61,
-    transcript:
-      "Review went well. Arjun said head of design by next year. I smiled the whole meeting and then felt nothing on the way home. I wanted my name on something big. So why does it feel like a coat that doesn't fit.",
+    transcript: "Review went well. Arjun said head of design by next year. I smiled the whole meeting and then felt nothing on the way home. I wanted my name on something big. So why does it feel like a coat that doesn't fit.",
     energy: wave([0.6, 0.62, 0.58, 0.5, 0.38, 0.3, 0.28, 0.26, 0.24, 0.22, 0.2, 0.22, 0.2, 0.18, 0.16, 0.18, 0.15, 0.12]),
     pace: 131,
     pauses: 5,
@@ -234,13 +235,13 @@ export const CLIPS = {
       { t: 9, kind: "flat", phrase: "head of design by next year", note: "Said almost without inflection, though it was the good news." },
       { t: 47, kind: "slow", phrase: "a coat that doesn't fit", note: "You slowed to under 100 words a minute for the last line." },
     ],
+    duration: undefined
   },
   review: {
     id: "c11",
     name: "After the review.m4a",
     secs: 73,
-    transcript:
-      "Recording this walking out. They want me to lead the whole platform. It's the thing I said I wanted for three years. I didn't say yes yet. I said I'd think. I don't know why I said that. Actually I do.",
+    transcript: "Recording this walking out. They want me to lead the whole platform. It's the thing I said I wanted for three years. I didn't say yes yet. I said I'd think. I don't know why I said that. Actually I do.",
     energy: wave([0.7, 0.72, 0.68, 0.6, 0.55, 0.5, 0.4, 0.32, 0.3, 0.34, 0.3, 0.26, 0.2, 0.3, 0.42, 0.5]),
     pace: 152,
     pauses: 6,
@@ -254,13 +255,13 @@ export const CLIPS = {
       { t: 22, kind: "flat", phrase: "the thing I said I wanted", note: "Flat, like the April clip." },
       { t: 58, kind: "lift", phrase: "Actually I do", note: "Your voice came back up on the last three words, quieter but steadier." },
     ],
+    duration: undefined
   },
   chair: {
     id: "c12",
     name: "Walking back from the workshop.m4a",
     secs: 49,
-    transcript:
-      "Walking back from Dev's. I helped glue a chair. Clamps everywhere, sawdust in my hair. I was happier for that one hour than for the whole sprint. Is that a sign, or is it just a Saturday.",
+    transcript: "Walking back from Dev's. I helped glue a chair. Clamps everywhere, sawdust in my hair. I was happier for that one hour than for the whole sprint. Is that a sign, or is it just a Saturday.",
     energy: wave([0.6, 0.68, 0.74, 0.8, 0.84, 0.86, 0.82, 0.78, 0.74, 0.7, 0.58, 0.5, 0.46]),
     pace: 158,
     pauses: 2,
@@ -271,6 +272,7 @@ export const CLIPS = {
       { name: "Calm", v: 0.15 },
     ],
     moments: [{ t: 18, kind: "lift", phrase: "sawdust in my hair", note: "You laughed through this line. Your fastest, brightest stretch this year." }],
+    duration: undefined
   },
 } satisfies Record<string, Clip>;
 
@@ -383,8 +385,7 @@ export const TRAIL: TrailItem[] = [
 
 // A recording made in the prototype, when the microphone isn't available or nothing was transcribed.
 export const SAMPLE_CLIP: Omit<Clip, "id" | "name" | "secs" | "src"> = {
-  transcript:
-    "Okay. Walking to the bus. Arjun wants an answer by Friday. And the thing is I'm not scared of the work. I'm scared of not having Saturdays. Of the workshop becoming a place I used to go.",
+  transcript: "Okay. Walking to the bus. Arjun wants an answer by Friday. And the thing is I'm not scared of the work. I'm scared of not having Saturdays. Of the workshop becoming a place I used to go.",
   energy: [0.62, 0.66, 0.6, 0.5, 0.42, 0.36, 0.3, 0.26, 0.22, 0.3, 0.24, 0.18, 0.2, 0.16],
   pace: 134,
   pauses: 6,
@@ -393,6 +394,7 @@ export const SAMPLE_CLIP: Omit<Clip, "id" | "name" | "secs" | "src"> = {
     { t: 9, kind: "flat", phrase: "an answer by Friday", note: "Flat, the same tone as the April and May clips about the role." },
     { t: 24, kind: "pause", phrase: "a place I used to go", note: "The longest pause, 2.2 seconds, right before this." },
   ],
+  duration: undefined
 };
 
 export const themeById = (id: string) => THEMES.find((t) => t.id === id);

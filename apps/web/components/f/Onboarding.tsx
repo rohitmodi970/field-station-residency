@@ -7,7 +7,7 @@
 // memory grows from the answers in front of you. It ends where the app begins.
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ART_SRC, type Art, type Clip } from "@/data/mira";
 import PaintedMark from "./PaintedMark";
 import { f, useF } from "@/lib/f/store";

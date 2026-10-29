@@ -7,9 +7,10 @@
 // memory icon saves it (it also saves itself when you go back).
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { Block, Clip } from "@/data/mira";
 import { esc, f, fmtLong, fmtTime, uid, useF } from "@/lib/f/store";
+import { useR } from "@/lib/f/residency";
 import { clipFromFile } from "@/lib/f/audio";
 import { AudioBubble } from "./Bubbles";
 import { BlurTop } from "./Nav";
@@ -121,9 +122,29 @@ export default function EntryView({ id }: { id: string }) {
 
   const commit = (quiet = false) => {
     if (!entry) return;
-    f.updateEntry(id, { title: title.trim() || entry.title, blocks: collect() });
+    const nextBlocks = collect();
+    const nextTitle = title.trim() || entry.title;
+    f.updateEntry(id, { title: nextTitle, blocks: nextBlocks });
     setDirty(false);
     if (!quiet) setSaved(true);
+
+    try {
+      const uId = useR.getState().uniqueId;
+      if (uId) {
+        fetch("/api/residency/entries", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            uniqueId: uId,
+            entryId: id,
+            title: nextTitle,
+            blocks: nextBlocks,
+            themes: entry.themes,
+            mood: entry.mood,
+          }),
+        }).catch((err) => console.warn("[EntryView] Background entry sync failed:", err));
+      }
+    } catch {}
   };
 
   // Autosave, like Notes: a moment after you stop, it's kept, and says so quietly.
@@ -207,7 +228,8 @@ export default function EntryView({ id }: { id: string }) {
     const at = blocks.findIndex((x) => x.kind === "text" && refs.current[x.id]?.contains(s?.anchorNode ?? null));
     const i = at < 0 ? blocks.length - 1 : at + 1;
     const next = [...blocks.slice(0, i), b, ...blocks.slice(i)];
-    setBlocks(next[next.length - 1].kind === "text" ? next : [...next, { id: uid("b"), kind: "text", html: "" }]);
+    const last = next[next.length - 1];
+    setBlocks(last && last.kind === "text" ? next : [...next, { id: uid("b"), kind: "text", html: "" }]);
     setDirty(true);
     haptic("soft");
   };
@@ -288,9 +310,9 @@ export default function EntryView({ id }: { id: string }) {
               className="block w-full bg-transparent t-large text-ink outline-none placeholder:text-ink-3"
             />
             <p className="mt-1 flex items-center gap-2 t-num text-ink-3">
-              <span>{fmtLong(entry.date)}</span>
+              <span>{entry?.date ? fmtLong(entry.date) : ""}</span>
               <span className="h-3 w-px bg-ink-4" />
-              <span>{fmtTime(entry.time)}</span>
+              <span>{entry?.time ? fmtTime(entry.time) : ""}</span>
               <AnimatePresence>
                 {(saved || dirty) && (
                   <motion.span key={saved ? "s" : "d"} className="t-meta text-ink-3" initial={false} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
@@ -383,7 +405,14 @@ export default function EntryView({ id }: { id: string }) {
                   )}
                 </AnimatePresence>
               </div>
-              <button type="button" onClick={() => refs.current[blocks[blocks.length - 1]?.id]?.focus()} className="h-[52px] min-w-0 flex-1 pl-2 text-left t-body text-ink-3">
+              <button
+                type="button"
+                onClick={() => {
+                  const lastId = blocks[blocks.length - 1]?.id;
+                  if (lastId) refs.current[lastId]?.focus();
+                }}
+                className="h-[52px] min-w-0 flex-1 pl-2 text-left t-body text-ink-3"
+              >
                 Keep writing…
               </button>
               <div className="grid h-[52px] w-11 shrink-0 place-items-center">

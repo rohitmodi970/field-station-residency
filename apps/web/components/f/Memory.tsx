@@ -8,7 +8,7 @@
 // Tap a drop to look at it; Select to pick several (like Photos).
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { AREAS, entryClips, themeById, type Entry } from "@/data/mira";
 import { MAYBE_QUEST } from "@/data/social";
 import { f, fmtShort, useF } from "@/lib/f/store";
@@ -20,6 +20,8 @@ import { Dot, Dots } from "./marks";
 import Nav from "./Nav";
 import { Row, ago, questEntries, questFace, quiet } from "./Quests";
 import { I, Logo, Paint, SPRING, haptic } from "./ui";
+import { LogOut } from "lucide-react";
+import { r, useR } from "@/lib/f/residency";
 
 type FilterDef = { id: string; label: string; test: (e: Entry) => boolean };
 
@@ -88,6 +90,8 @@ function Empty() {
 }
 
 export default function Memory() {
+  const rName = useR((s) => s.name);
+  const rEmail = useR((s) => s.email);
   const entries = useF((s) => s.entries);
   const quests = useF((s) => s.quests);
   const trail = useF((s) => s.trail);
@@ -401,6 +405,27 @@ export default function Memory() {
           </ul>
           {!foundMoments.length && <p className="pt-6 text-center t-body text-ink-3">{q ? `Nothing for “${q}”.` : "Nothing matches these filters."}</p>}
         </Section>
+
+        {/* Logout session button at the bottom of the memory scroll view */}
+        <div className="mt-14 flex flex-col items-center justify-center pb-12 pt-4">
+          <button
+            type="button"
+            onClick={() => {
+              haptic("soft");
+              r.logout();
+              f.restartOnboarding();
+              f.home();
+            }}
+            className="press flex h-11 items-center justify-center gap-2 rounded-full bg-paper px-6 t-body font-medium text-ink-2 shadow-sm transition-colors hover:text-[#c4321f]"
+            style={{ boxShadow: "var(--lift-1)" }}
+          >
+            <LogOut size={16} className="shrink-0" />
+            <span>Log out</span>
+          </button>
+          <span className="mt-2 text-center t-meta text-ink-4">
+            {rName ? `Signed in as ${rName}${rEmail ? ` (${rEmail})` : ""}` : "Sign out of this session"}
+          </span>
+        </div>
       </div>
 
       <AnimatePresence>{picking && <Calendar entries={entries} value={range} onChange={(r) => f.mem({ range: r })} onClose={() => setPicking(false)} />}</AnimatePresence>

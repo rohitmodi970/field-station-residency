@@ -7,7 +7,7 @@
 // a swipe to the right); the Energy map and You open from their pills.
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { MIRA_FACE, PEOPLE } from "@/data/social";
 import { f, useF, type Msg } from "@/lib/f/store";
 import { AudioBubble, Bubble, MediaBubble, Swipeable, Typing } from "./Bubbles";

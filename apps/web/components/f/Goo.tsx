@@ -43,14 +43,23 @@ export function string(a: Blob, b: Blob, art: Art, n = 9, w = 0.03): Blob[] {
 }
 
 export function drawGoo(ctx: CanvasRenderingContext2D, blobs: Blob[], W: number, H: number, dpr: number) {
+  if (W <= 0 || H <= 0) return;
+  const mw = Math.round(W * dpr * 0.75);
+  const mh = Math.round(H * dpr * 0.75);
+  const lw = Math.round(W * dpr);
+  const lh = Math.round(H * dpr);
+  if (mw <= 0 || mh <= 0 || lw <= 0 || lh <= 0) return;
+
   const mask = document.createElement("canvas");
-  mask.width = Math.round(W * dpr * 0.75);
-  mask.height = Math.round(H * dpr * 0.75);
-  const m = mask.getContext("2d", { willReadFrequently: true })!;
+  mask.width = mw;
+  mask.height = mh;
+  const m = mask.getContext("2d", { willReadFrequently: true });
+  if (!m) return;
   const layer = document.createElement("canvas");
-  layer.width = Math.round(W * dpr);
-  layer.height = Math.round(H * dpr);
-  const l = layer.getContext("2d")!;
+  layer.width = lw;
+  layer.height = lh;
+  const l = layer.getContext("2d");
+  if (!l) return;
   const B = soft();
   const lo = 0.42 * 255 - 12;
   const hi = 0.42 * 255 + 12;
@@ -67,6 +76,7 @@ export function drawGoo(ctx: CanvasRenderingContext2D, blobs: Blob[], W: number,
       const R = b.r * H * 1.7 * MS;
       m.drawImage(B, b.x * W * MS - R, b.y * H * MS - R, R * 2, R * 2);
     }
+    if (mask.width <= 0 || mask.height <= 0) continue;
     const img = m.getImageData(0, 0, mask.width, mask.height);
     const d = img.data;
     for (let i = 3; i < d.length; i += 4) d[i] = d[i] <= lo ? 0 : d[i] >= hi ? 255 : ((d[i] - lo) / (hi - lo)) * 255;
@@ -99,11 +109,15 @@ export default function Goo({ blobs, w, h, className = "", label }: { blobs: Blo
   const key = JSON.stringify(blobs);
   useEffect(() => {
     const c = cv.current;
-    if (!c) return;
+    if (!c || w <= 0 || h <= 0) return;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    c.width = Math.round(w * dpr);
-    c.height = Math.round(h * dpr);
-    const ctx = c.getContext("2d")!;
+    const cw = Math.round(w * dpr);
+    const ch = Math.round(h * dpr);
+    if (cw <= 0 || ch <= 0) return;
+    c.width = cw;
+    c.height = ch;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
     const paint = () => {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, c.width, c.height);
@@ -116,5 +130,5 @@ export default function Goo({ blobs, w, h, className = "", label }: { blobs: Blo
     return () => pending.forEach((p) => p.removeEventListener("load", paint));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- key stands in for blobs
   }, [key, w, h]);
-  return <canvas ref={cv} className={`block shrink-0 ${className}`} style={{ width: w, height: h }} role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : true} />;
+  return <canvas ref={cv} className={`block shrink-0 ${className}`} style={{ width: Math.max(0, w), height: Math.max(0, h) }} role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : true} />;
 }

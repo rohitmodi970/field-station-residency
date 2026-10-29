@@ -1,0 +1,992 @@
+/* ============================================================================
+   GOOGLE FONTS PRELOAD (Optional - fonts load dynamically via ThemeContext)
+   ============================================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap');
+
+/* Hydrogen Whiskey Font */
+@font-face {
+  font-family: 'Hydrogen Whiskey';
+  src: url('https://assets.codepen.io/756881/HydrogenWhiskey.woff2') format('woff2'),
+       url('https://assets.codepen.io/756881/HydrogenWhiskey.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Terminal Grotesque';
+  src: url('/fonts/terminal-grotesque.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Terminal Grotesque Open';
+  src: url('/fonts/terminal-grotesque_open.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================================
+   TAILWIND IMPORTS & SOURCES
+   ============================================================================ */
+@import "tailwindcss";
+@source "../../../apps/**/*.{ts,tsx}";
+@source "../../../components/**/*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";
+
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+
+
+/* ============================================================================
+   ROOT CSS VARIABLES - Warm Glass Theme (HSL)
+   ============================================================================ */
+@layer base {
+  :root {
+    /* Font System */
+    --font-family: 'Terminal Grotesque', var(--font-Terminal-Grotesque), 'Inter', 'Segoe UI', 'Noto Sans', Arial, sans-serif;
+    --font-serif: 'Cormorant Garamond', 'Georgia', serif;
+    --font-terminal-grotesque: 'Terminal Grotesque', sans-serif;
+
+    /* Add the @font-face for Terminal Grotesque at top-level (outside :root): 
+    @font-face {
+      font-family: 'Terminal Grotesque';
+      src: url('/fonts/terminal-grotesque.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    */
+    
+    /* Warm neutral backgrounds */
+    --background: 28 25% 97%;
+    --foreground: 25 15% 25%;
+
+    /* Glass card with warm tint */
+    --card: 0 0% 100%;
+    --card-foreground: 25 15% 25%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 15% 25%;
+
+    /* Warm gold primary */
+    --primary: 38 70% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Soft peach secondary */
+    --secondary: 25 40% 92%;
+    --secondary-foreground: 25 25% 35%;
+
+    /* Muted warm tones */
+    --muted: 25 30% 90%;
+    --muted-foreground: 25 15% 55%;
+
+    /* Amber accent */
+    --accent: 35 85% 65%;
+    --accent-foreground: 25 20% 20%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Soft borders */
+    --border: 25 20% 88%;
+    --input: 25 20% 88%;
+    --ring: 38 70% 55%;
+
+    --radius: 1rem;
+    
+    /* Chart Colors */
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    
+    /* Sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* ========================================================================
+       CUSTOM DESIGN TOKENS - Glass Morphism & Effects
+       ======================================================================== */
+    --gradient-warm: linear-gradient(135deg, hsl(350 85% 75%), hsl(30 90% 75%), hsl(280 70% 80%));
+    --gradient-glass: linear-gradient(135deg, hsla(0, 0%, 100%, 0.9), hsla(0, 0%, 100%, 0.7));
+    --gradient-mesh: radial-gradient(at 0% 0%, hsl(350 85% 75%) 0px, transparent 50%),
+                     radial-gradient(at 100% 0%, hsl(280 70% 80%) 0px, transparent 50%),
+                     radial-gradient(at 100% 100%, hsl(30 90% 75%) 0px, transparent 50%),
+                     radial-gradient(at 0% 100%, hsl(220 80% 75%) 0px, transparent 50%);
+    
+    /* Shadow System */
+    --shadow-soft: 0 8px 32px hsla(25, 25%, 20%, 0.06);
+    --shadow-medium: 0 12px 48px hsla(25, 25%, 20%, 0.1);
+    --shadow-deep: 0 20px 60px hsla(25, 25%, 20%, 0.15);
+    --shadow-glow: 0 0 24px hsla(38, 70%, 55%, 0.15);
+    --shadow-inner: inset 0 2px 8px hsla(0, 0%, 0%, 0.05);
+    
+    /* Blur System */
+    --blur-subtle: 8px;
+    --blur-glass: 24px;
+    --blur-heavy: 40px;
+    
+    /* Glass Components */
+    --glass-bg: hsla(0, 0%, 100%, 0.1);
+    --glass-border: hsla(0, 0%, 100%, 0.2);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-fast: all 0.15s ease;
+    
+    /* ========================================================================
+       B2C DASHBOARD DESIGN TOKENS
+       ======================================================================== */
+    --radius-soft: 1rem;
+    --radius-pill: 9999px;
+    --radius-hero: 1.5rem;
+    --spacing-section: 2.5rem;
+    --spacing-card: 1.5rem;
+    --shadow-card: 0 2px 16px hsla(25, 25%, 20%, 0.06);
+    --shadow-hero: 0 8px 32px hsla(25, 25%, 20%, 0.08);
+    --shadow-hover: 0 12px 40px hsla(25, 25%, 20%, 0.12);
+    
+    /* Hero Gradients */
+    --gradient-hero-morning: linear-gradient(135deg, #fef3c7 0%, #fde68a 30%, #fbbf24 100%);
+    --gradient-hero-afternoon: linear-gradient(135deg, #dbeafe 0%, #93c5fd 30%, #3b82f6 100%);
+    --gradient-hero-evening: linear-gradient(135deg, #ede9fe 0%, #c4b5fd 30%, #8b5cf6 100%);
+    --gradient-hero-night: linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4338ca 100%);
+    --gradient-prompt: linear-gradient(135deg, hsl(38, 70%, 95%) 0%, hsl(35, 85%, 90%) 50%, hsl(30, 90%, 85%) 100%);
+    
+    /* Mood Colors */
+    --mood-happy: #10b981;
+    --mood-calm: #3b82f6;
+    --mood-neutral: #f59e0b;
+    --mood-sad: #6366f1;
+    --mood-anxious: #ef4444;
+    --mood-energetic: #f97316;
+    --mood-tired: #8b5cf6;
+  }
+
+  .dark {
+    --background: 25 20% 12%;
+    --foreground: 25 10% 92%;
+
+    --card: 25 18% 15%;
+    --card-foreground: 25 10% 92%;
+
+    --popover: 25 18% 15%;
+    --popover-foreground: 25 10% 92%;
+
+    --primary: 38 70% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 25 15% 22%;
+    --secondary-foreground: 25 10% 92%;
+
+    --muted: 25 15% 22%;
+    --muted-foreground: 25 10% 70%;
+
+    --accent: 35 85% 65%;
+    --accent-foreground: 25 10% 15%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 25 10% 92%;
+
+    --border: 25 15% 25%;
+    --input: 25 15% 25%;
+    --ring: 38 70% 55%;
+    
+    /* Dark Mode Design Tokens */
+    --gradient-warm: linear-gradient(135deg, hsl(15 50% 25%), hsl(30 45% 22%), hsl(340 40% 25%));
+    --gradient-glass: linear-gradient(135deg, hsla(25, 18%, 18%, 0.9), hsla(25, 15%, 15%, 0.7));
+    --gradient-mesh: radial-gradient(at 0% 0%, hsl(15 50% 25%) 0px, transparent 50%),
+                     radial-gradient(at 100% 0%, hsl(340 40% 25%) 0px, transparent 50%),
+                     radial-gradient(at 100% 100%, hsl(30 45% 22%) 0px, transparent 50%),
+                     radial-gradient(at 0% 100%, hsl(220 40% 20%) 0px, transparent 50%);
+    
+    --shadow-soft: 0 8px 32px hsla(0, 0%, 0%, 0.3);
+    --shadow-medium: 0 12px 48px hsla(0, 0%, 0%, 0.4);
+    --shadow-deep: 0 20px 60px hsla(0, 0%, 0%, 0.5);
+    --shadow-glow: 0 0 24px hsla(38, 70%, 55%, 0.2);
+    --shadow-inner: inset 0 2px 8px hsla(0, 0%, 0%, 0.2);
+    
+    --glass-bg: hsla(25, 18%, 18%, 0.1);
+    --glass-border: hsla(255, 255%, 255%, 0.1);
+    
+    /* Dark B2C Tokens */
+    --shadow-card: 0 2px 16px hsla(0, 0%, 0%, 0.25);
+    --shadow-hero: 0 8px 32px hsla(0, 0%, 0%, 0.3);
+    --shadow-hover: 0 12px 40px hsla(0, 0%, 0%, 0.35);
+    --gradient-hero-morning: linear-gradient(135deg, #78350f 0%, #92400e 30%, #b45309 100%);
+    --gradient-hero-afternoon: linear-gradient(135deg, #1e3a5f 0%, #1e40af 30%, #2563eb 100%);
+    --gradient-hero-evening: linear-gradient(135deg, #2e1065 0%, #4c1d95 30%, #6d28d9 100%);
+    --gradient-hero-night: linear-gradient(135deg, #0f0a2e 0%, #1e1b4b 30%, #312e81 100%);
+    --gradient-prompt: linear-gradient(135deg, hsl(38, 30%, 18%) 0%, hsl(35, 35%, 22%) 50%, hsl(30, 40%, 25%) 100%);
+  }
+}
+
+@layer utilities {
+  .font-terminal-grotesque {
+    font-family: var(--font-terminal-grotesque) !important;
+  }
+
+  .onairos-sdk-button-wrapper button,
+  .onairos-sdk-button-wrapper button *,
+  .onairos-sdk-button-wrapper button span,
+  .onairos-sdk-button-wrapper button p {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+}
+
+/* ============================================================================
+   ONBOARDING V2 DESIGN TOKENS (literal hex — no var() chains)
+   ============================================================================ */
+@theme {
+  /* Canvas / surface / raised */
+  --color-ob-canvas:        #FBF7F1;
+  --color-ob-surface:       #F4EDE2;
+  --color-ob-raised:        #FFFDF9;
+  --color-ob-border:        #E6DCCB;
+  --color-ob-border-strong: #D6C8B4;
+
+  /* Ink hierarchy */
+  --color-ob-ink:           #2A211C;
+  --color-ob-ink-hover:     #3D3029;
+  --color-ob-ink-muted:     #6B5D53;
+  --color-ob-ink-faint:     #7A6B60; /* 5.07 : 1 on canvas */
+
+  /* Clay accent */
+  --color-ob-clay:          #9F6958;
+  --color-ob-clay-strong:   #7F4F40;
+  --color-ob-clay-soft:     #F1E1DA;
+
+  /* Semantic */
+  --color-ob-danger:        #B4432F;
+  --color-ob-danger-soft:   #FBEAE5;
+  --color-ob-success:       #3F7D5A;
+  --color-ob-success-soft:  #E4F1E9;
+
+  /* Force aliases */
+  --color-force-canvas:        #FBF7F1;
+  --color-force-surface:       #F4EDE2;
+  --color-force-raised:        #FFFDF9;
+  --color-force-border:        #E6DCCB;
+  --color-force-border-strong: #D6C8B4;
+  --color-force-ink:           #2A211C;
+  --color-force-ink-muted:     #6B5D53;
+  --color-force-ink-faint:     #7A6B60;
+  --color-force-clay:          #9F6958;
+  --color-force-clay-strong:   #7F4F40;
+  --color-force-clay-soft:     #F1E1DA;
+  --color-force-danger:        #B4432F;
+  --color-force-danger-soft:   #FBEAE5;
+}
+
+/* ============================================================================
+   TAILWIND THEME INTEGRATION
+   ============================================================================ */
+@theme inline {
+  /* Onboarding V2 Font Stacks */
+  --font-ob-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-ob-body:    var(--font-inter), "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-ob-caveat:  var(--font-caveat), "Caveat", cursive;
+
+  /* Color Mappings */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  
+  /* Border Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Sidebar Mappings */
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* ============================================================================
+   DIARY FONT SYSTEM
+   CSS variables on :root (overridable via inline styles on ancestor elements).
+   Explicit @utility classes guarantee .font-journal / .font-handwriting exist.
+   ============================================================================ */
+
+@utility font-journal {
+  font-family: var(--font-journal, 'Cormorant Garamond', 'Georgia', serif);
+}
+
+@utility font-handwriting {
+  font-family: var(--font-handwriting, 'Caveat', 'Dancing Script', cursive);
+}
+
+/* ============================================================================
+   BASE STYLES
+   ============================================================================ */
+@layer base {
+  :root {
+    --font-journal: 'Cormorant Garamond', 'Georgia', serif;
+    --font-handwriting: 'Caveat', 'Dancing Script', cursive;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+    outline-color: hsl(var(--ring) / 0.5);
+  }
+  
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-family);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Typography Hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+  }
+  
+  h2 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+  }
+  
+  h3 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+  
+  h4 {
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  }
+  
+  p {
+    line-height: 1.7;
+  }
+  
+  /* Smooth Scrolling */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  
+  /* Selection Styling */
+  ::selection {
+    background-color: hsl(var(--primary) / 0.2);
+    color: hsl(var(--foreground));
+  }
+  
+  /* Focus Styles */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================================================
+   FORCE SOFT VIBRANCE - APP-WIDE AESTHETIC LAYER
+   Scoped to .force-soft-vibrance so theme editor logic remains untouched.
+   ============================================================================ */
+@layer components {
+  .force-soft-vibrance {
+    position: relative;
+    background:
+      radial-gradient(1180px 700px at 10% -20%, rgba(217, 185, 160, 0.24), transparent 55%),
+      radial-gradient(1120px 650px at 90% 0%, rgba(167, 197, 183, 0.22), transparent 52%),
+      radial-gradient(920px 560px at 50% 120%, rgba(198, 175, 156, 0.16), transparent 60%),
+      linear-gradient(180deg, #fdf9f4 0%, #f7efe6 48%, #f0e7dd 100%);
+    color: #3f3128;
+  }
+
+  .force-soft-vibrance::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(420px 260px at 20% 12%, rgba(184, 148, 124, 0.14), transparent 70%),
+      radial-gradient(380px 240px at 82% 16%, rgba(155, 187, 171, 0.16), transparent 72%),
+      radial-gradient(460px 300px at 55% 78%, rgba(168, 141, 120, 0.08), transparent 76%);
+    mix-blend-mode: normal;
+    opacity: 0.95;
+  }
+
+  .force-soft-vibrance > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .force-soft-vibrance .rounded-xl,
+  .force-soft-vibrance .rounded-2xl,
+  .force-soft-vibrance .rounded-3xl,
+  .force-soft-vibrance .rounded-lg,
+  .force-soft-vibrance .card,
+  .force-soft-vibrance [class*="shadow"] {
+    border-color: rgba(186, 160, 140, 0.36) !important;
+  }
+
+  .force-soft-vibrance .bg-white,
+  .force-soft-vibrance .bg-card,
+  .force-soft-vibrance .bg-background,
+  .force-soft-vibrance [style*="background: #fff"],
+  .force-soft-vibrance [style*="background:#fff"] {
+    background-color: rgba(255, 252, 247, 0.82) !important;
+    backdrop-filter: blur(14px) saturate(1.08);
+    -webkit-backdrop-filter: blur(14px) saturate(1.08);
+    box-shadow: 0 12px 34px rgba(122, 95, 74, 0.1), 0 3px 10px rgba(122, 95, 74, 0.08);
+  }
+
+  .force-soft-vibrance button,
+  .force-soft-vibrance .btn,
+  .force-soft-vibrance [role="button"] {
+    transition: transform 0.18s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .force-soft-vibrance button:hover,
+  .force-soft-vibrance .btn:hover,
+  .force-soft-vibrance [role="button"]:hover {
+    box-shadow: 0 8px 24px rgba(127, 101, 82, 0.18);
+  }
+
+  .force-soft-vibrance button:active,
+  .force-soft-vibrance .btn:active,
+  .force-soft-vibrance [role="button"]:active {
+    transform: translateY(1px) scale(0.995);
+  }
+
+  .force-soft-vibrance input,
+  .force-soft-vibrance textarea,
+  .force-soft-vibrance select {
+    background: rgba(255, 252, 247, 0.8) !important;
+    border-color: rgba(181, 153, 132, 0.45) !important;
+    color: #4e3c2f !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+
+  .force-soft-vibrance input:focus,
+  .force-soft-vibrance textarea:focus,
+  .force-soft-vibrance select:focus {
+    border-color: rgba(147, 119, 98, 0.72) !important;
+    box-shadow: 0 0 0 3px rgba(147, 119, 98, 0.16) !important;
+    outline: none;
+  }
+
+  .force-soft-vibrance .text-muted-foreground,
+  .force-soft-vibrance .text-gray-500,
+  .force-soft-vibrance .text-gray-600,
+  .force-soft-vibrance .text-slate-500,
+  .force-soft-vibrance .text-slate-600 {
+    color: #7d6858 !important;
+  }
+
+  .force-soft-vibrance .text-primary,
+  .force-soft-vibrance .text-pink-500,
+  .force-soft-vibrance .text-pink-600 {
+    color: #7f6550 !important;
+  }
+
+  .force-soft-vibrance .bg-primary,
+  .force-soft-vibrance .bg-pink-500,
+  .force-soft-vibrance .bg-pink-600 {
+    background: linear-gradient(135deg, #9b7c68 0%, #8f7562 55%, #7f9f92 100%) !important;
+    color: #fff !important;
+    border-color: rgba(135, 109, 91, 0.7) !important;
+  }
+
+  .force-soft-vibrance [class*="bg-force-purple"],
+  .force-soft-vibrance [class*="bg-force-vivid-purple"] {
+    background: linear-gradient(135deg, #9b7c68 0%, #7f9f92 100%) !important;
+    color: #fff !important;
+    border-color: rgba(132, 109, 92, 0.72) !important;
+  }
+
+  .force-soft-vibrance [class*="text-force-purple"],
+  .force-soft-vibrance [class*="text-force-vivid-purple"] {
+    color: #735b4a !important;
+  }
+
+  .force-soft-vibrance [class*="bg-force-soft-purple"] {
+    background: rgba(241, 232, 223, 0.88) !important;
+  }
+
+  .force-soft-vibrance .chip,
+  .force-soft-vibrance .badge,
+  .force-soft-vibrance [class*="rounded-full"] {
+    border-color: rgba(181, 153, 132, 0.44);
+  }
+
+  .force-soft-vibrance .water-nav,
+  .force-soft-vibrance [class*="WaterNav"],
+  .force-soft-vibrance [class*="nav"] {
+    --nav-glass-bg: rgba(253, 246, 238, 0.82);
+    --nav-glass-border: rgba(181, 153, 132, 0.48);
+  }
+
+  @media (max-width: 768px) {
+    .force-soft-vibrance {
+      background:
+        radial-gradient(740px 460px at 8% -8%, rgba(213, 182, 160, 0.26), transparent 56%),
+        radial-gradient(760px 460px at 95% 4%, rgba(165, 195, 180, 0.24), transparent 53%),
+        linear-gradient(180deg, #fcf7f1 0%, #f2e9df 100%);
+    }
+  }
+}
+
+/* ============================================================================
+   UTILITY CLASSES - Pure CSS (No @apply)
+   ============================================================================ */
+@layer utilities {
+  /* Font Utilities */
+  .font-serif-display {
+    font-family: var(--font-serif);
+  }
+  
+  .font-system {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  /* Glass Morphism Effects */
+  .glass-effect {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(var(--blur-glass));
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+  
+  .glass-heavy {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+    backdrop-filter: blur(var(--blur-heavy));
+    -webkit-backdrop-filter: blur(var(--blur-heavy));
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+  }
+  
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur-subtle));
+    -webkit-backdrop-filter: blur(var(--blur-subtle));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+  }
+  
+  /* Gradient Backgrounds */
+  .bg-gradient-warm {
+    background: var(--gradient-warm);
+  }
+  
+  .bg-gradient-glass {
+    background: var(--gradient-glass);
+  }
+  
+  .bg-gradient-mesh {
+    background: var(--gradient-mesh);
+  }
+  
+  /* Shadow System */
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .shadow-medium {
+    box-shadow: var(--shadow-medium);
+  }
+  
+  .shadow-deep {
+    box-shadow: var(--shadow-deep);
+  }
+  
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .shadow-inner {
+    box-shadow: var(--shadow-inner);
+  }
+  
+  /* Transitions */
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+  
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+  
+  .transition-fast {
+    transition: var(--transition-fast);
+  }
+  
+  /* Text Gradients */
+  .text-gradient-warm {
+    background: var(--gradient-warm);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Hover Effects */
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-deep);
+  }
+  
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+@layer utilities {
+  /* Blob Animation */
+  @keyframes blob {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    25% {
+      transform: translate(20px, -50px) scale(1.1);
+    }
+    50% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+    75% {
+      transform: translate(50px, 50px) scale(1.05);
+    }
+  }
+
+  /* Fade In */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Slide Up */
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Scale In */
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Bounce Slow */
+  @keyframes bounce-slow {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* Scroll Fade */
+  @keyframes scroll-fade {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Shimmer */
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  
+  /* Pulse Glow */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px hsla(var(--primary) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px hsla(var(--primary) / 0.6);
+    }
+  }
+
+  /* Animation Classes */
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.5s ease-out;
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 2s infinite;
+  }
+
+  .animate-scroll-fade {
+    animation: scroll-fade 0.8s ease-out;
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 1000px 100%;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Animation Delays */
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+/* ============================================================================
+   COMPONENT SPECIFIC STYLES - Pure CSS (No @apply)
+   ============================================================================ */
+@layer components {
+  /* Improved Button Base */
+  .btn-base {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: var(--transition-smooth);
+  }
+  
+  .btn-base:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+  
+  .btn-base:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  
+  /* Card Component Enhancement */
+  .card-enhanced {
+    border-radius: 0.75rem;
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-smooth);
+  }
+  
+  .card-enhanced:hover {
+    box-shadow: var(--shadow-medium);
+  }
+  
+  /* Input Enhancement */
+  .input-enhanced {
+    display: flex;
+    height: 2.5rem;
+    width: 100%;
+    border-radius: 0.375rem;
+    border: 1px solid hsl(var(--input));
+    background-color: hsl(var(--background));
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    transition: var(--transition-smooth);
+  }
+  
+  .input-enhanced::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+  
+  .input-enhanced:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+  
+  .input-enhanced:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  /* Hydrogen Whiskey Font Utility */
+  .font-hydrogen {
+    font-family: 'Hydrogen Whiskey', sans-serif;
+  }
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}
+
+@layer utilities {
+  @keyframes shift-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes grain-drift {
+    0% { transform: translate3d(0, 0, 0); }
+    25% { transform: translate3d(-2%, -1%, 0); }
+    50% { transform: translate3d(1%, -2%, 0); }
+    75% { transform: translate3d(-1%, 2%, 0); }
+    100% { transform: translate3d(0, 0, 0); }
+  }
+
+  /* Onboarding step enter */
+  @keyframes ob-rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .bg-animate-shift {
+    background-size: 200% 200%;
+    animation: shift-gradient 18s ease-in-out infinite;
+  }
+
+  .bg-animate-grain {
+    animation: grain-drift 12s linear infinite;
+  }
+
+  .ob-enter {
+    animation: ob-rise 300ms ease-out both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-enter {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   PWA & MOBILE STANDALONE OPTIMIZATIONS
+   ============================================================================ */
+/* Eliminate 300ms tap delay in mobile browsers and standalone PWAs */
+a, button, input, select, textarea, [role="button"] {
+  touch-action: manipulation;
+}
+
+/* Safe-area padding support for mobile notches & dynamic islands */
+@supports (padding-top: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Smooth scrolling and prevent rubber-band glitching in standalone mode */
+@media all and (display-mode: standalone) {
+  body {
+    overscroll-behavior-y: none;
+  }
+}

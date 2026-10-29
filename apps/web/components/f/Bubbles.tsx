@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "framer-motion";
 import type { Clip, Kind } from "@/data/mira";
 import { fmtSecs } from "@/lib/f/store";
 import { usePlayer } from "@/lib/f/player";
@@ -178,7 +178,9 @@ export function Swipeable({ kind, onAct, children }: { kind: Kind; onAct: () => 
     g.current = null;
     if (!s || s.dir !== "h") return;
     const h = s.hist;
-    const vel = h.length > 1 ? (h[h.length - 1].x - h[0].x) / Math.max(1, h[h.length - 1].t - h[0].t) : 0; // px/ms
+    const first = h[0];
+    const last = h[h.length - 1];
+    const vel = first && last && h.length > 1 ? (last.x - first.x) / Math.max(1, last.t - first.t) : 0; // px/ms
     const cur = x.get();
     const dir = Math.sign(cur) || 1;
     const along = vel * dir; // speed in the direction it's open

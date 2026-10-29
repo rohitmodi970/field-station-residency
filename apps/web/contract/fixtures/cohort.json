@@ -2,582 +2,113 @@
   "_fixture": "Known-good cohort for the Friday demo: residents' approved snapshots and manually reviewed connections, in the v1.1 contract. Arjun has not approved or shared, so he must not appear in the graph.",
   "snapshots": [
     {
-      "id": "snapshot_meera",
-      "resident_id": "meera",
-      "name": "Meera",
+      "id": "snapshot_meera", "resident_id": "meera", "name": "Meera",
       "intent": "Finish thirty interviews on how farming families borrow money, and turn them into a public report.",
       "problem": "Small farmers borrow from informal lenders at steep rates, and banks never see how families actually decide.",
-      "approach": [
-        "User research",
-        "Data",
-        "Writing"
-      ],
+      "approach": ["User research", "Data", "Writing"],
       "current_frontier": "How do I get families to talk honestly about debt in a single visit?",
-      "contribution": {
-        "can_offer": [
-          "Experience",
-          "Perspective"
-        ],
-        "seeking": [
-          "Feedback",
-          "A skill"
-        ]
-      },
+      "contribution": { "can_offer": ["Experience", "Perspective"], "seeking": ["Feedback", "A skill"] },
       "next_step": null,
-      "provenance": {
-        "intent": [
-          "user_answer:q1"
-        ],
-        "problem": [
-          "user_answer:q2"
-        ],
-        "approach": [
-          "user_answer"
-        ],
-        "current_frontier": [
-          "user_answer:q3"
-        ],
-        "contribution": [
-          "contribution_fields"
-        ]
-      },
-      "inferred": [],
-      "status": "approved",
-      "shared": true,
-      "updated_at": "2026-10-29T05:10:00.000Z",
-      "persona": {
-        "positive": [
-          {
-            "name": "Empathy",
-            "strength": 88,
-            "evidence": "You save and share long stories about the people behind a statistic."
-          },
-          {
-            "name": "Rigour",
-            "strength": 79,
-            "evidence": "You question sources and come back to correct earlier notes."
-          },
-          {
-            "name": "Patience",
-            "strength": 74,
-            "evidence": "You follow topics over months rather than days."
-          },
-          {
-            "name": "Curiosity",
-            "strength": 66,
-            "evidence": "You ask follow-up questions in most of your threads."
-          }
-        ],
-        "private_growth": [],
-        "summary": "A researcher who earns trust slowly and turns long conversations into clear, fair writing.",
-        "explanation": "Empathy and rigour show up together: you return to the same families and check what you heard before you write it.",
-        "archetype": "Patient Listener",
-        "nudges": [],
-        "coverage": {
-          "analyzed": 900,
-          "sampled": 180,
-          "label": "20%",
-          "platforms": [
-            "YouTube",
-            "ChatGPT"
-          ]
-        },
-        "fixture": true
-      }
+      "provenance": { "intent": ["user_answer:q1"], "problem": ["user_answer:q2"], "approach": ["user_answer"], "current_frontier": ["user_answer:q3"], "contribution": ["contribution_fields"] },
+      "inferred": [], "status": "approved", "shared": true, "updated_at": "2026-10-29T05:10:00.000Z"
     },
     {
-      "id": "snapshot_kabir",
-      "resident_id": "kabir",
-      "name": "Kabir",
+      "id": "snapshot_kabir", "resident_id": "kabir", "name": "Kabir",
       "intent": "Get three working sensor prototypes into village water tanks and log a month of readings.",
       "problem": "Village tanks run dry without warning, and the people who manage them have no cheap way to see the level.",
-      "approach": [
-        "Hardware",
-        "Prototyping",
-        "Data"
-      ],
+      "approach": ["Hardware", "Prototyping", "Data"],
       "current_frontier": "Can a sensor survive monsoon humidity and still cost under five hundred rupees?",
-      "contribution": {
-        "can_offer": [
-          "Skills",
-          "Tools"
-        ],
-        "seeking": [
-          "Feedback",
-          "An introduction"
-        ]
-      },
+      "contribution": { "can_offer": ["Skills", "Tools"], "seeking": ["Feedback", "An introduction"] },
       "next_step": null,
-      "provenance": {
-        "intent": [
-          "user_answer:q1"
-        ],
-        "problem": [
-          "user_answer:q2"
-        ],
-        "approach": [
-          "user_answer"
-        ],
-        "current_frontier": [
-          "user_answer:q3"
-        ],
-        "contribution": [
-          "contribution_fields"
-        ]
-      },
-      "inferred": [],
-      "status": "approved",
-      "shared": true,
-      "updated_at": "2026-10-29T05:22:00.000Z",
-      "persona": {
-        "positive": [
-          {
-            "name": "Making",
-            "strength": 91,
-            "evidence": "You watch and save build videos, then ask how to adapt them."
-          },
-          {
-            "name": "Persistence",
-            "strength": 82,
-            "evidence": "You return to the same hardware problem across weeks."
-          },
-          {
-            "name": "Practicality",
-            "strength": 77,
-            "evidence": "Your questions are about cost and what survives outdoors."
-          },
-          {
-            "name": "Curiosity",
-            "strength": 60,
-            "evidence": "You browse adjacent fields like water policy now and then."
-          }
-        ],
-        "private_growth": [],
-        "summary": "A builder who learns by soldering first and reading later, and keeps going until the thing works in the field.",
-        "explanation": "Making and persistence lead: most of what you watch and ask about is how to fix a specific broken part.",
-        "archetype": "Hands-on Tinkerer",
-        "nudges": [],
-        "coverage": {
-          "analyzed": 1400,
-          "sampled": 260,
-          "label": "19%",
-          "platforms": [
-            "YouTube",
-            "Instagram"
-          ]
-        },
-        "fixture": true
-      }
+      "provenance": { "intent": ["user_answer:q1"], "problem": ["user_answer:q2"], "approach": ["user_answer"], "current_frontier": ["user_answer:q3"], "contribution": ["contribution_fields"] },
+      "inferred": [], "status": "approved", "shared": true, "updated_at": "2026-10-29T05:22:00.000Z"
     },
     {
-      "id": "snapshot_ananya",
-      "resident_id": "ananya",
-      "name": "Ananya",
+      "id": "snapshot_ananya", "resident_id": "ananya", "name": "Ananya",
       "intent": "Draft four chapters of a book about the old markets of Pune.",
       "problem": "The people who run Pune's old markets are disappearing as the markets modernise, and nobody is recording their stories.",
-      "approach": [
-        "Writing",
-        "User research"
-      ],
+      "approach": ["Writing", "User research"],
       "current_frontier": "How do I shape the book so it isn't just a list of portraits?",
-      "contribution": {
-        "can_offer": [
-          "Perspective",
-          "Experience"
-        ],
-        "seeking": [
-          "Feedback",
-          "A perspective"
-        ]
-      },
+      "contribution": { "can_offer": ["Perspective", "Experience"], "seeking": ["Feedback", "A perspective"] },
       "next_step": null,
-      "provenance": {
-        "intent": [
-          "user_answer:q1"
-        ],
-        "problem": [
-          "user_answer:q2"
-        ],
-        "approach": [
-          "user_answer"
-        ],
-        "current_frontier": [
-          "user_answer:q3"
-        ],
-        "contribution": [
-          "contribution_fields"
-        ]
-      },
-      "inferred": [],
-      "status": "approved",
-      "shared": true,
-      "updated_at": "2026-10-29T05:40:00.000Z",
-      "persona": {
-        "positive": [
-          {
-            "name": "Observation",
-            "strength": 86,
-            "evidence": "You save street photography and portraits of markets."
-          },
-          {
-            "name": "Voice",
-            "strength": 80,
-            "evidence": "You draft and rewrite openings until they sound like a person."
-          },
-          {
-            "name": "Empathy",
-            "strength": 73,
-            "evidence": "You follow stories about elders and family trades."
-          },
-          {
-            "name": "Patience",
-            "strength": 58,
-            "evidence": "You come back to long reads over several days."
-          }
-        ],
-        "private_growth": [],
-        "summary": "A writer drawn to places and the people who hold them together, collecting voices before they disappear.",
-        "explanation": "Observation and voice come through most: you save portraits and long reads about cities and the people in them.",
-        "archetype": "Story Keeper",
-        "nudges": [],
-        "coverage": {
-          "analyzed": 700,
-          "sampled": 150,
-          "label": "21%",
-          "platforms": [
-            "Instagram",
-            "ChatGPT"
-          ]
-        },
-        "fixture": true
-      }
+      "provenance": { "intent": ["user_answer:q1"], "problem": ["user_answer:q2"], "approach": ["user_answer"], "current_frontier": ["user_answer:q3"], "contribution": ["contribution_fields"] },
+      "inferred": [], "status": "approved", "shared": true, "updated_at": "2026-10-29T05:40:00.000Z"
     },
     {
-      "id": "snapshot_dev",
-      "resident_id": "dev",
-      "name": "Dev",
+      "id": "snapshot_dev", "resident_id": "dev", "name": "Dev",
       "intent": "Run an AI tutor pilot in two government school classrooms.",
       "problem": "Teachers in government schools have fifty students and no time for one-to-one help, and most learning apps assume a phone per child.",
-      "approach": [
-        "AI",
-        "Education",
-        "Prototyping"
-      ],
+      "approach": ["AI", "Education", "Prototyping"],
       "current_frontier": "How do I measure whether students actually learned, not just used it?",
-      "contribution": {
-        "can_offer": [
-          "Skills",
-          "Tools"
-        ],
-        "seeking": [
-          "A perspective",
-          "An introduction"
-        ]
-      },
+      "contribution": { "can_offer": ["Skills", "Tools"], "seeking": ["A perspective", "An introduction"] },
       "next_step": null,
-      "provenance": {
-        "intent": [
-          "user_answer:q1"
-        ],
-        "problem": [
-          "user_answer:q2"
-        ],
-        "approach": [
-          "user_answer"
-        ],
-        "current_frontier": [
-          "user_answer:q3"
-        ],
-        "contribution": [
-          "contribution_fields"
-        ]
-      },
-      "inferred": [],
-      "status": "approved",
-      "shared": true,
-      "updated_at": "2026-10-29T06:02:00.000Z",
-      "persona": {
-        "positive": [
-          {
-            "name": "Optimism",
-            "strength": 84,
-            "evidence": "You share stories of small classroom wins and what made them work."
-          },
-          {
-            "name": "Analytical",
-            "strength": 78,
-            "evidence": "You ask how outcomes were measured before you trust them."
-          },
-          {
-            "name": "Teaching",
-            "strength": 75,
-            "evidence": "You explain ideas step by step when others ask."
-          },
-          {
-            "name": "Persistence",
-            "strength": 62,
-            "evidence": "You stay with the same pilot questions over months."
-          }
-        ],
-        "private_growth": [],
-        "summary": "An educator-builder who believes simple tools can reach every classroom, and measures before celebrating.",
-        "explanation": "Optimism is checked by evidence: you share hopeful stories about schools, then ask how the results were measured.",
-        "archetype": "Practical Optimist",
-        "nudges": [],
-        "coverage": {
-          "analyzed": 1100,
-          "sampled": 220,
-          "label": "20%",
-          "platforms": [
-            "YouTube",
-            "ChatGPT"
-          ]
-        },
-        "fixture": true
-      }
+      "provenance": { "intent": ["user_answer:q1"], "problem": ["user_answer:q2"], "approach": ["user_answer"], "current_frontier": ["user_answer:q3"], "contribution": ["contribution_fields"] },
+      "inferred": [], "status": "approved", "shared": true, "updated_at": "2026-10-29T06:02:00.000Z"
     },
     {
-      "id": "snapshot_zoya",
-      "resident_id": "zoya",
-      "name": "Zoya",
+      "id": "snapshot_zoya", "resident_id": "zoya", "name": "Zoya",
       "intent": "Shoot and rough-cut a fifteen-minute documentary on the last letter-writers of the old city.",
       "problem": "The last professional letter-writers are retiring, and their trade and its stories will be lost within a few years.",
-      "approach": [
-        "Film",
-        "User research",
-        "Writing"
-      ],
+      "approach": ["Film", "User research", "Writing"],
       "current_frontier": "How do I earn the trust of people who have never been filmed?",
-      "contribution": {
-        "can_offer": [
-          "Perspective",
-          "Resources"
-        ],
-        "seeking": [
-          "Feedback"
-        ]
-      },
+      "contribution": { "can_offer": ["Perspective", "Resources"], "seeking": ["Feedback"] },
       "next_step": null,
-      "provenance": {
-        "intent": [
-          "user_answer:q1"
-        ],
-        "problem": [
-          "user_answer:q2"
-        ],
-        "approach": [
-          "user_answer"
-        ],
-        "current_frontier": [
-          "user_answer:q3"
-        ],
-        "contribution": [
-          "contribution_fields"
-        ]
-      },
-      "inferred": [],
-      "status": "approved",
-      "shared": true,
-      "updated_at": "2026-10-29T06:15:00.000Z",
-      "persona": {
-        "positive": [
-          {
-            "name": "Observation",
-            "strength": 90,
-            "evidence": "You save frames and scenes that hold on small details."
-          },
-          {
-            "name": "Patience",
-            "strength": 81,
-            "evidence": "You favour long, quiet interviews over quick cuts."
-          },
-          {
-            "name": "Empathy",
-            "strength": 76,
-            "evidence": "You follow stories about people who rarely speak on camera."
-          },
-          {
-            "name": "Craft",
-            "strength": 64,
-            "evidence": "You ask about lenses, light and sound in detail."
-          }
-        ],
-        "private_growth": [],
-        "summary": "A filmmaker who notices what others walk past and waits for people to open up on their own time.",
-        "explanation": "Observation and patience lead: you save slow documentaries and long, unedited interviews.",
-        "archetype": "Quiet Observer",
-        "nudges": [],
-        "coverage": {
-          "analyzed": 800,
-          "sampled": 160,
-          "label": "20%",
-          "platforms": [
-            "YouTube",
-            "Instagram"
-          ]
-        },
-        "fixture": true
-      }
+      "provenance": { "intent": ["user_answer:q1"], "problem": ["user_answer:q2"], "approach": ["user_answer"], "current_frontier": ["user_answer:q3"], "contribution": ["contribution_fields"] },
+      "inferred": [], "status": "approved", "shared": true, "updated_at": "2026-10-29T06:15:00.000Z"
     },
     {
-      "id": "snapshot_arjun",
-      "resident_id": "arjun",
-      "name": "Arjun",
+      "id": "snapshot_arjun", "resident_id": "arjun", "name": "Arjun",
       "intent": "Put every weekly market in three small towns on an open map.",
       "problem": "Small towns are missing from the maps people use, so their markets and services are invisible.",
-      "approach": [
-        "Data",
-        "Open source"
-      ],
+      "approach": ["Data", "Open source"],
       "current_frontier": null,
-      "contribution": {
-        "can_offer": [
-          "Skills"
-        ],
-        "seeking": []
-      },
+      "contribution": { "can_offer": ["Skills"], "seeking": [] },
       "next_step": null,
-      "provenance": {
-        "intent": [
-          "user_answer:q1"
-        ],
-        "problem": [
-          "user_answer:q2"
-        ],
-        "approach": [
-          "user_answer"
-        ],
-        "contribution": [
-          "contribution_fields"
-        ]
-      },
-      "inferred": [],
-      "status": "pending_review",
-      "shared": false,
-      "updated_at": "2026-10-29T06:30:00.000Z",
-      "persona": {
-        "positive": [
-          {
-            "name": "Structure",
-            "strength": 85,
-            "evidence": "You organise data and share clean versions."
-          },
-          {
-            "name": "Generosity",
-            "strength": 72,
-            "evidence": "You publish your tools for anyone to use."
-          }
-        ],
-        "private_growth": [],
-        "summary": "A systems thinker who wants every small place to be findable.",
-        "explanation": "Structure and generosity show up together: you build open tools and share them freely.",
-        "archetype": "Map Maker",
-        "nudges": [],
-        "coverage": {
-          "analyzed": 600,
-          "sampled": 120,
-          "label": "20%",
-          "platforms": [
-            "YouTube"
-          ]
-        },
-        "fixture": true
-      }
+      "provenance": { "intent": ["user_answer:q1"], "problem": ["user_answer:q2"], "approach": ["user_answer"], "contribution": ["contribution_fields"] },
+      "inferred": [], "status": "pending_review", "shared": false, "updated_at": "2026-10-29T06:30:00.000Z"
     }
   ],
   "connections": [
     {
-      "id": "conn_meera_zoya",
-      "source": "person_meera",
-      "target": "person_zoya",
-      "type": "shared_exploration",
+      "id": "conn_meera_zoya", "source": "person_meera", "target": "person_zoya", "type": "shared_exploration",
       "why_connected": "You're both working out how to get honest answers from people who are rarely asked.",
       "what_to_explore": "What do you each do in the first ten minutes to make someone comfortable?",
-      "evidence_refs": [
-        "snapshot_meera",
-        "snapshot_zoya"
-      ],
+      "evidence_refs": ["snapshot_meera", "snapshot_zoya"],
       "evidence": [
-        {
-          "snapshot_id": "snapshot_meera",
-          "field": "current_frontier",
-          "text": "How do I get families to talk honestly about debt in a single visit?"
-        },
-        {
-          "snapshot_id": "snapshot_zoya",
-          "field": "current_frontier",
-          "text": "How do I earn the trust of people who have never been filmed?"
-        }
+        { "snapshot_id": "snapshot_meera", "field": "current_frontier", "text": "How do I get families to talk honestly about debt in a single visit?" },
+        { "snapshot_id": "snapshot_zoya", "field": "current_frontier", "text": "How do I earn the trust of people who have never been filmed?" }
       ],
-      "origin": "reviewed",
-      "reviewed_by": "Shriyanshi"
+      "origin": "reviewed", "reviewed_by": "Shriyanshi"
     },
     {
-      "id": "conn_ananya_zoya",
-      "source": "person_ananya",
-      "target": "person_zoya",
-      "type": "shared_problem",
+      "id": "conn_ananya_zoya", "source": "person_ananya", "target": "person_zoya", "type": "shared_problem",
       "why_connected": "You're both recording people and trades the city is losing before they disappear.",
       "what_to_explore": "Which person would each of you most regret not recording this year?",
-      "evidence_refs": [
-        "snapshot_ananya",
-        "snapshot_zoya"
-      ],
+      "evidence_refs": ["snapshot_ananya", "snapshot_zoya"],
       "evidence": [
-        {
-          "snapshot_id": "snapshot_ananya",
-          "field": "problem",
-          "text": "The people who run Pune's old markets are disappearing as the markets modernise."
-        },
-        {
-          "snapshot_id": "snapshot_zoya",
-          "field": "problem",
-          "text": "The last professional letter-writers are retiring, and their trade will be lost."
-        }
+        { "snapshot_id": "snapshot_ananya", "field": "problem", "text": "The people who run Pune's old markets are disappearing as the markets modernise." },
+        { "snapshot_id": "snapshot_zoya", "field": "problem", "text": "The last professional letter-writers are retiring, and their trade will be lost." }
       ],
-      "origin": "reviewed",
-      "reviewed_by": "Shriyanshi"
+      "origin": "reviewed", "reviewed_by": "Shriyanshi"
     },
     {
-      "id": "conn_kabir_dev",
-      "source": "person_kabir",
-      "target": "person_dev",
-      "type": "complementary_approach",
+      "id": "conn_kabir_dev", "source": "person_kabir", "target": "person_dev", "type": "complementary_approach",
       "why_connected": "Both of you are piloting prototypes far from the city; Kabir logs hardware data, Dev measures learning.",
       "what_to_explore": "What does a fair one-month pilot look like when the site is hours away?",
-      "evidence_refs": [
-        "snapshot_kabir",
-        "snapshot_dev"
-      ],
+      "evidence_refs": ["snapshot_kabir", "snapshot_dev"],
       "evidence": [
-        {
-          "snapshot_id": "snapshot_kabir",
-          "field": "approach",
-          "text": "Hardware, Prototyping, Data"
-        },
-        {
-          "snapshot_id": "snapshot_dev",
-          "field": "approach",
-          "text": "AI, Education, Prototyping"
-        }
+        { "snapshot_id": "snapshot_kabir", "field": "approach", "text": "Hardware, Prototyping, Data" },
+        { "snapshot_id": "snapshot_dev", "field": "approach", "text": "AI, Education, Prototyping" }
       ],
-      "origin": "reviewed",
-      "reviewed_by": "Shriyanshi"
+      "origin": "reviewed", "reviewed_by": "Shriyanshi"
     },
     {
-      "id": "conn_arjun_meera",
-      "source": "person_arjun",
-      "target": "person_meera",
-      "type": "potential_contribution",
+      "id": "conn_arjun_meera", "source": "person_arjun", "target": "person_meera", "type": "potential_contribution",
       "why_connected": "Arjun's maps could show where Meera's families sell, but he hasn't approved his snapshot yet.",
       "what_to_explore": "Which markets do Meera's families sell in?",
-      "evidence_refs": [
-        "snapshot_arjun",
-        "snapshot_meera"
-      ],
+      "evidence_refs": ["snapshot_arjun", "snapshot_meera"],
       "evidence": [],
-      "origin": "reviewed",
-      "reviewed_by": "Shriyanshi"
+      "origin": "reviewed", "reviewed_by": "Shriyanshi"
     }
   ]
 }

@@ -7,7 +7,7 @@
 //   Pattern maps: a card that rises over whatever you're on.
 
 import { useEffect, useRef } from "react";
-import { AnimatePresence, LayoutGroup, animate, motion, useMotionValue } from "motion/react";
+import { AnimatePresence, LayoutGroup, animate, motion, useMotionValue } from "framer-motion";
 import { f, tapped, useF, type Screen } from "@/lib/f/store";
 import Companion from "./Companion";
 import EntryView from "./EntryView";
@@ -21,7 +21,6 @@ import ResidencyOnboarding from "../r/Onboarding";
 import Persona from "../r/Persona";
 import Residents from "../r/Residents";
 import ConnectionPage from "../r/Connection";
-import { BlurTop } from "./Nav";
 import { useR } from "@/lib/f/residency";
 import { SPRING, haptic } from "./ui";
 
@@ -62,7 +61,7 @@ function Panel() {
   // Memory sits to the left of the chat: swipe it back to the left and it follows your finger
   // off the screen. Every other page goes back the iOS way, from the left edge.
   const dir = -1;
-  const pageSwipe = !!top && surfaceOf(stack[0]) === "memory-surface";
+  const pageSwipe = !!top && !!stack[0] && surfaceOf(stack[0]) === "memory-surface";
   const x = useMotionValue(0);
   const g = useRef<{ id: number; x0: number; y0: number; edge: boolean; on: boolean | null; hist: { x: number; t: number }[] } | null>(null);
   const box = useRef<HTMLDivElement>(null);
@@ -102,7 +101,9 @@ function Panel() {
     if (!s || s.id !== e.pointerId || !s.on) return;
     const w = box.current?.clientWidth ?? 393;
     const h = s.hist;
-    const vel = h.length > 1 ? (h[h.length - 1].x - h[0].x) / Math.max(1, h[h.length - 1].t - h[0].t) : 0;
+    const first = h[0];
+    const last = h[h.length - 1];
+    const vel = first && last && h.length > 1 ? (last.x - first.x) / Math.max(1, last.t - first.t) : 0;
     const way = s.edge ? 1 : dir;
     if (Math.abs(x.get()) > w * 0.3 || vel * way > 0.6) {
       haptic("soft");
@@ -120,10 +121,10 @@ function Panel() {
           key="paper"
           ref={box}
           className="absolute inset-0 z-20 overflow-hidden bg-canvas"
-          style={{ transformOrigin: from ? `${from.x}px ${from.y}px` : surfaceOf(stack[0]) === "energy-surface" ? "100% 0%" : "0% 0%", borderRadius: 36 }}
-          initial={{ scale: 0.5, opacity: 0 }}
+          style={{ transformOrigin: from ? `${from.x}px ${from.y}px` : surfaceOf(stack[0] ?? top) === "energy-surface" ? "100% 0%" : "0% 0%", borderRadius: 36 }}
+          initial={{ scale: 0.18, opacity: 0 }}
           animate={{ scale: 1, opacity: 1, borderRadius: 0 }}
-          exit={{ scale: 0.5, opacity: 0, borderRadius: 36, transition: { type: "spring", duration: 0.26, bounce: 0 } }}
+          exit={{ scale: 0.18, opacity: 0, borderRadius: 36, transition: { type: "spring", duration: 0.38, bounce: 0 } }}
           transition={SPRING.surface}
         >
           {stack.length > 1 && <div className="absolute inset-0 bg-canvas opacity-60" aria-hidden />}
@@ -145,27 +146,23 @@ function Toast() {
     return () => clearTimeout(id);
   }, [toast]);
   return (
-    <AnimatePresence>
-      {toast && (
-        <motion.div key="toast" className="pointer-events-none absolute inset-x-0 top-0 z-[80]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.18 } }} transition={{ duration: 0.18 }}>
-          {/* What's underneath blurs away, so the message reads as sitting above the page */}
-          <BlurTop height={128} />
-          <div className="absolute inset-x-0 flex justify-center px-4" style={{ top: "calc(var(--sat) + 64px)" }}>
-            <motion.div
-              key={toast.key}
-              role="status"
-              initial={{ opacity: 0, y: -8, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={SPRING.ui}
-              className="pointer-events-auto flex h-11 max-w-full items-center rounded-full px-5 t-label font-medium text-ink backdrop-blur-xl"
-              style={{ background: "rgb(255 255 255 / 0.82)", boxShadow: "var(--lift-2)" }}
-            >
-              <span className="truncate">{toast.text}</span>
-            </motion.div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className="pointer-events-none absolute inset-x-0 z-[80] flex justify-center px-4" style={{ top: "calc(var(--sat) + 64px)" }}>
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            key={toast.key}
+            role="status"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, transition: { duration: 0.15 } }}
+            transition={SPRING.ui}
+            className="pill pointer-events-auto h-10 max-w-full t-label"
+          >
+            <span className="truncate">{toast.text}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

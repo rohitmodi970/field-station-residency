@@ -7,11 +7,12 @@
 // who have this energy.
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, animate, motion, useDragControls, useMotionValue, useTransform } from "motion/react";
+import { AnimatePresence, animate, motion, useDragControls, useMotionValue, useTransform } from "framer-motion";
 import { ART_TONE, USUAL, type Art, type Clip, type Entry, type Moment } from "@/data/mira";
 import { PEOPLE, questOfTheme } from "@/data/social";
 import { clipsIn, collectiveFor, voiceFor } from "@/lib/f/analyse";
 import { f, fmtSecs, useF, type Sheet as SheetT } from "@/lib/f/store";
+import { useR } from "@/lib/f/residency";
 import { usePlayer } from "@/lib/f/player";
 import Goo, { string, type Blob } from "./Goo";
 import { Dots } from "./marks";
@@ -95,14 +96,15 @@ function Map({ topics, es }: { topics: { id: string; name: string; art: Art; sha
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => setW(el.clientWidth));
+    const ro = new ResizeObserver(() => { if (el.clientWidth > 0) setW(el.clientWidth); });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
   const H = 240;
   const { blobs, labels } = useMemo(() => {
     const n = topics.length;
-    const k = H / w;
+    const safeW = Math.max(1, w);
+    const k = H / safeW;
     const centres = topics.map((t, i) => {
       if (n === 1) return { x: 0.5, y: 0.5 };
       const a = -Math.PI / 2 + (i / n) * Math.PI * 2 + (n === 2 ? Math.PI / 2 : 0);
@@ -145,12 +147,56 @@ function PatternView({ sheet }: { sheet: SheetT }) {
   const es = useMemo(() => entries.filter((e) => sheet.scope.entryIds.includes(e.id)), [entries, sheet.scope]);
   const clips = useMemo(() => clipsIn(sheet.scope, entries), [sheet.scope, entries]);
   const voices = useMemo(() => voiceFor(clips), [clips]);
+  const [aiInsight, setAiInsight] = useState<{
+    headline?: string;
+    coreTension?: string;
+    quote?: string;
+    themes?: { name: string; art?: Art; line: string }[];
+    nextMove?: string;
+    sharedWith?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const textToAnalyze =
+      sheet.scope.text ||
+      es
+        .map((e) =>
+          e.blocks
+            .map((b) => (b.kind === "text" ? b.html.replace(/<[^>]+>/g, " ") : b.kind === "audio" ? b.clip.transcript : ""))
+            .join(" ")
+        )
+        .join(" ")
+        .trim();
+
+    if (!textToAnalyze || textToAnalyze.length < 10) return;
+
+    fetch("/api/analyze-entry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ entry: textToAnalyze }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.insight) {
+          setAiInsight({
+            headline: data.insight.core || data.summary,
+            coreTension: data.insight.tension,
+            nextMove: data.questions?.[0]?.question,
+          });
+        }
+      })
+      .catch((e) => console.warn("[PatternView] analyze-entry error:", e));
+  }, [sheet.key, sheet.scope.label, es, sheet.scope.text]);
+
   useEffect(() => {
     if (sheet.trailId || recorded.has(sheet.key)) return;
     recorded.add(sheet.key);
     f.remember({ kind: "pattern", title: read.patterns[0]?.p.name ?? sheet.scope.label, scope: sheet.scope.label, entryIds: sheet.scope.entryIds, text: sheet.scope.text });
   }, [sheet, read]);
-  const moves = read.patterns.map((x) => x.p.movement);
+  const moves = [
+    ...(aiInsight?.nextMove ? [aiInsight.nextMove] : []),
+    ...read.patterns.map((x) => x.p.movement),
+  ];
   // Opened from a voice note: start at what your voice did.
   const voiceRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -162,6 +208,25 @@ function PatternView({ sheet }: { sheet: SheetT }) {
       {read.topics.length > 0 && (
         <div className="overflow-hidden rounded-[28px] bg-paper" style={{ boxShadow: "var(--lift-1)" }}>
           <Map topics={read.topics} es={es} />
+        </div>
+      )}
+
+      {/* Live AI pattern summary if generated */}
+      {aiInsight?.headline && (
+        <div className="mt-6 rounded-[28px] bg-paper p-5" style={{ boxShadow: "var(--lift-1)" }}>
+          <span className="t-meta text-ink-3">Live LLM Insight</span>
+          <p className="mt-1 t-body font-semibold text-ink">{aiInsight.headline}</p>
+          {aiInsight.coreTension && (
+            <p className="mt-2 t-label text-ink-2">
+              <span className="font-medium text-ink">Tension: </span>
+              {aiInsight.coreTension}
+            </p>
+          )}
+          {aiInsight.sharedWith && (
+            <p className="mt-2 t-meta text-ink-3">
+              Resonates with: {aiInsight.sharedWith}
+            </p>
+          )}
         </div>
       )}
 

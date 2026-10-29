@@ -23,7 +23,7 @@ import type { Art } from "@/data/mira";
 export default function VoiceMode({ origin, shotOf, onClose, onStop, limit, onClip, orb }: { origin: { x: number; y: number }; shotOf: HTMLElement | null; onClose: () => void; onStop?: () => void; limit?: number; onClip?: (clip: Clip) => void; orb?: { art: Art; x: number; y: number; size: number; zoom?: number; icon?: React.ReactNode } }) {
   const cv = useRef<HTMLCanvasElement>(null);
   const [rec, setRec] = useState<Recording | null>(null);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(false); // the water has drawn its first frame
   const [settled, setSettled] = useState(false); // the first wave has crossed; now the pill
   const [secs, setSecs] = useState(0);
   const recRef = useRef<Recording | null>(null);
@@ -62,16 +62,23 @@ export default function VoiceMode({ origin, shotOf, onClose, onStop, limit, onCl
   // Photograph the screen, then let the water run.
   useEffect(() => {
     const c = cv.current;
-    if (!c || !shotOf) return;
+    // Nothing to photograph: plain rings instead of a blank overlay
+    if (!c || !shotOf) {
+      setPlain(true);
+      setSettled(true);
+      return;
+    }
     let w: Water | null = null;
     let raf = 0;
     let live = true;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    // The browser's own renderer photographs the screen (SVG foreignObject). If that fails,
-    // html2canvas draws it by hand.
+
     // Cloned scroll containers forget where they were scrolled to, so the clone's contents are
     // shifted up by the same amount: the photograph shows the conversation where you left it.
     const scrolled = Array.from(shotOf.querySelectorAll<HTMLElement>("[data-scroll]")).map((el) => ({ key: el.dataset.scroll!, top: el.scrollTop }));
+
+    // The browser's own renderer photographs the screen (SVG foreignObject). If that fails,
+    // html2canvas draws it by hand.
     import("modern-screenshot")
       .then(({ domToCanvas }) =>
         domToCanvas(shotOf, {
@@ -90,15 +97,16 @@ export default function VoiceMode({ origin, shotOf, onClose, onStop, limit, onCl
         }),
       )
       .catch(() =>
-        import("html2canvas").then(({ default: html2canvas }) =>
-          html2canvas(shotOf, {
+        import("html2canvas").then((mod) => {
+          const html2canvas = (mod as any).default || mod;
+          return html2canvas(shotOf, {
             scale: dpr,
             backgroundColor: "#f6f5f3",
             logging: false,
             useCORS: true,
-            ignoreElements: (el) => el.hasAttribute("data-no-shot") || el.tagName === "NEXTJS-PORTAL",
-          }),
-        ),
+            ignoreElements: (el: Element) => el.hasAttribute("data-no-shot") || el.tagName === "NEXTJS-PORTAL",
+          });
+        }),
       )
       .then((shot) => {
         if (!live) return;
@@ -109,11 +117,13 @@ export default function VoiceMode({ origin, shotOf, onClose, onStop, limit, onCl
           setSettled(true);
           return;
         }
-        setReady(true);
-        // The touch, and a softer second ring behind it
+        // The touch, drawn once before the canvas is revealed so there is no blank flash
         w.ring(1);
-        setTimeout(() => w?.ring(0.5), 180);
-        setTimeout(() => setSettled(true), 1100);
+        w.frame(start);
+        setReady(true);
+        // ...and a softer second ring behind it
+        setTimeout(() => live && w?.ring(0.5), 180);
+        setTimeout(() => live && setSettled(true), 1100);
         let lastVoice = start;
         let lastIdle = start + 400;
         const frame = (now: number) => {
@@ -134,6 +144,7 @@ export default function VoiceMode({ origin, shotOf, onClose, onStop, limit, onCl
       })
       .catch(() => {
         // No photograph (or no WebGL): nothing to bend, so plain rings from the same point.
+        if (!live) return;
         setPlain(true);
         setSettled(true);
       });
@@ -178,6 +189,7 @@ export default function VoiceMode({ origin, shotOf, onClose, onStop, limit, onCl
 
   return (
     <div data-no-shot className="absolute inset-0 z-[70]" onClick={finish} role="dialog" aria-label="Voice mode. Tap anywhere to finish.">
+      {/* The photographed screen, bent by the ripple shader */}
       <canvas ref={cv} className="absolute inset-0 h-full w-full transition-opacity duration-200" style={{ opacity: ready ? 1 : 0 }} aria-hidden />
       {/* Tapping anywhere finishes; this is the same for a keyboard or a screen reader */}
       <button ref={doneBtn} type="button" onClick={(e) => (e.stopPropagation(), finish())} className="sr-only">
@@ -209,13 +221,12 @@ export default function VoiceMode({ origin, shotOf, onClose, onStop, limit, onCl
               {orb.icon}
             </Glass>
           </span>
-          {/* Its own pill, so it reads cleanly over whatever the conversation has behind it */}
-          <p className="pointer-events-none absolute left-1/2 flex max-w-[calc(100%-32px)] -translate-x-1/2 items-center whitespace-nowrap rounded-full bg-paper px-4 py-2 t-label text-ink-2 transition-opacity duration-300" style={{ top: origin.y - orb.size / 2 - 52, opacity: settled ? 1 : 0, boxShadow: "var(--lift-1)" }}>
+          <p className="pointer-events-none absolute inset-x-0 text-center t-label text-ink-2 transition-opacity duration-300" style={{ top: origin.y - orb.size / 2 - 36, opacity: settled ? 1 : 0 }}>
             {rec ? (
               <>
                 <span className="t-num text-ink-3">{limit ? `${Math.max(0, limit - secs)}s` : `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`}</span>
                 <span className="mx-2 text-ink-4">·</span>
-                {sample ? "No microphone. Tap to finish." : "Listening · tap anywhere when done"}
+                {sample ? "No microphone, so this is a sample. Tap to finish." : "Listening. Tap anywhere when you're done."}
               </>
             ) : (
               "One moment"

@@ -1,63 +1,115 @@
+// apps/web/app/layout.tsx - Root Layout
+
+import "@workspace/ui/globals.css";
+import "@/styles/residency.css";
+import { Providers } from "@/components/providers";
+import { NavProvider } from "@/utilities/context/NavContext";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { Syne_Mono } from "next/font/google";
-import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import localFont from "next/font/local";
+import { Inter, Syne_Mono } from "next/font/google";
+import { PostHogProvider } from "./providers/posthog-provider";
+import { PostHogPageView } from "./providers/posthog-pageview";
+import { Suspense } from "react";
+import Script from "next/script";
 
-const syneMono = Syne_Mono({ subsets: ["latin"], weight: "400", variable: "--font-syne-mono", display: "swap" });
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
-const SITE = "https://force-proto.vercel.app";
-const TITLE = "Force";
-const TAGLINE = "A companion that builds your longitudinal memory and helps you find your perfect side quest partnerships.";
+const syneMono = Syne_Mono({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-syne-mono",
+  display: "swap",
+});
 
-// What the link looks like when it's shared or added to a home screen: her painting with the
-// mark on it, the name, the one line.
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE),
-  title: { default: TITLE, template: `%s · ${TITLE}` },
-  description: TAGLINE,
-  applicationName: TITLE,
-  appleWebApp: { capable: true, title: TITLE, statusBarStyle: "default" },
-  manifest: "/manifest.webmanifest",
-  icons: {
-    icon: [
-      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/icon.png", sizes: "64x64", type: "image/png" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-    ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
-  },
-  openGraph: {
-    type: "website",
-    url: SITE,
-    siteName: TITLE,
-    title: TITLE,
-    description: TAGLINE,
-    locale: "en_IN",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Force" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: TITLE,
-    description: TAGLINE,
-    images: ["/og.png"],
-  },
-  formatDetection: { telephone: false },
-  robots: { index: false, follow: false }, // a private prototype
-};
+const hydrogenWhiskey = localFont({
+  src: "../public/fonts/Hydrogen_Whiskey.otf",
+  variable: "--font-hydrogen",
+  display: "swap",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
   viewportFit: "cover",
-  interactiveWidget: "resizes-content",
-  themeColor: "#f6f5f3",
+  themeColor: "#171311",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+const siteUrl =
+  process.env.NEXT_PUBLIC_APP_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "https://findmyforce.com");
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: "Force Web App",
+  description: "Personal and private journal web app",
+  applicationName: "Force",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Force",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/forcelogo.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon-precomposed.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: ["/favicon-32x32.png"],
+  },
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className={syneMono.variable}>
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning className={`${hydrogenWhiskey.variable} ${syneMono.variable} ${inter.variable}`}>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Force" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#171311" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon-precomposed.png" />
+        <meta name="google-site-verification" content="aBm-Kkg-k42EQZHBkxj88IBE54lhQij-xuCWSTojkg8" />
+        <script src="https://js.puter.com/v2/" async></script>
+      </head>
+      <body suppressHydrationWarning>
+        <PostHogProvider>
+          <Suspense fallback={null}>
+            <PostHogPageView />
+          </Suspense>
+          <Providers>
+            {/* NavProvider wraps everything  context items set by child layoutes */}
+            <NavProvider>
+              {children}
+              <Analytics />
+              <SpeedInsights />
+            </NavProvider>
+          </Providers>
+        </PostHogProvider>
+      </body>
     </html>
   );
 }

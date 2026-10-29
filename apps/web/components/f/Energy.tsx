@@ -10,7 +10,7 @@
 // and a thread opens, with Force in it as the third person.
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ART_SRC, ART_TONE } from "@/data/mira";
 import { INCOMING, MIRA_FACE, PEOPLE, personById, questById, type Person } from "@/data/social";
 import { f, useF, type DmMsg } from "@/lib/f/store";
@@ -52,7 +52,7 @@ export default function Energy({ focus: initial }: { focus?: string }) {
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => setW(el.clientWidth));
+    const ro = new ResizeObserver(() => { if (el.clientWidth > 0) setW(el.clientWidth); });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
@@ -63,9 +63,10 @@ export default function Energy({ focus: initial }: { focus?: string }) {
   // Everyone strung to you. Angle spreads them round the upper room; length is how far their
   // energy is from yours. Nearer strands are thicker and brighter: warm near, cool far.
   const { spots, blobs } = useMemo(() => {
-    const k = H / w;
+    const safeW = Math.max(1, w);
+    const k = H / safeW;
     const n = PEOPLE.length;
-    const me: Blob = { x: (0.5 * w) / H, y: ME, r: 0, art: "dusk" };
+    const me: Blob = { x: (0.5 * safeW) / H, y: ME, r: 0, art: "dusk" };
     const blobs: Blob[] = [];
     const spots = PEOPLE.map((p, i) => {
       // Alternate sides so neighbours in the list aren't neighbours on the map
@@ -76,7 +77,7 @@ export default function Energy({ focus: initial }: { focus?: string }) {
       const y = Math.max(0.12, ME + Math.sin(a) * d);
       const art = questById(p.shares)?.art ?? "water";
       const dim = (focus && focus !== p.id ? 0.3 : 1) * (0.55 + p.energy * 0.45);
-      const end: Blob = { x: (x * w) / H, y, r: 0, art };
+      const end: Blob = { x: (x * safeW) / H, y, r: 0, art };
       blobs.push(...string(me, end, art, Math.round(10 + d * 30), 0.007 + p.energy * 0.007).map((b) => ({ ...b, a: dim })));
       return { p, x, y };
     });

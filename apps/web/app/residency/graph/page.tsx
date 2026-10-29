@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionConfig } from "motion/react";
+import { MotionConfig } from "framer-motion";
 import dynamic from "next/dynamic";
 
 const GraphStage = dynamic(() => import("@/components/r/GraphStage"), { ssr: false });

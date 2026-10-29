@@ -4,7 +4,7 @@
 // While you type, the mic becomes send. While you record, the field becomes your voice.
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { f } from "@/lib/f/store";
 import { clipFromFile, record, type Recording } from "@/lib/f/audio";
 import { I, SPRING, haptic } from "./ui";

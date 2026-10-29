@@ -1,0 +1,17 @@
+{
+  "ignoreCommand": "bash ../../scripts/vercel-ignore-step.sh",
+  "crons": [
+    {
+      "path": "/api/cron/process-reminders",
+      "schedule": "5 1 * * *"
+    },
+    {
+      "path": "/api/cron/process-eod-todos",
+      "schedule": "35 1 * * *"
+    },
+    {
+      "path": "/api/cron/daily-tasks-email",
+      "schedule": "30 6 * * *"
+    }
+  ]
+}

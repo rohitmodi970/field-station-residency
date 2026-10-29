@@ -71,7 +71,7 @@ export default function Frame({ children }: { children: React.ReactNode }) {
       <div className="frame">
         <div className="device" data-kb={vp.kb || undefined}>
           <div className="ground" aria-hidden />
-          <div className="absolute inset-x-0 top-0" style={{ height: vp.h ?? "100%", translate: vp.top ? `0 ${vp.top}px` : undefined, transition: "height 260ms cubic-bezier(0.2, 0.8, 0.2, 1), translate 260ms cubic-bezier(0.2, 0.8, 0.2, 1)" }}>
+          <div className="absolute inset-x-0 top-0" style={{ height: vp.kb && vp.h ? `${vp.h}px` : "100%", translate: vp.top ? `0 ${vp.top}px` : undefined, transition: "height 260ms cubic-bezier(0.2, 0.8, 0.2, 1), translate 260ms cubic-bezier(0.2, 0.8, 0.2, 1)" }}>
             {children}
           </div>
           <StatusBar />

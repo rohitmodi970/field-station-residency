@@ -48,12 +48,12 @@ const DOTLINE: [number, number][] = [
   [108, 10.5],
 ];
 const STROKES: Stroke[] = [
-  { pts: LEFT, w: 15, t0: 0.04, dur: 0.6 },
-  { pts: RIGHT, w: 15, t0: 0.52, dur: 0.6 },
-  { pts: DOTLINE, w: 11, t0: 1.08, dur: 0.1 },
-  { pts: BODYLINE, w: 12, t0: 1.19, dur: 0.42 },
+  { pts: LEFT, w: 15, t0: 0.05, dur: 0.85 },
+  { pts: RIGHT, w: 15, t0: 0.75, dur: 0.85 },
+  { pts: DOTLINE, w: 11, t0: 1.55, dur: 0.14 },
+  { pts: BODYLINE, w: 12, t0: 1.7, dur: 0.6 },
 ];
-const END = 1.65;
+const END = 2.4;
 
 function rng(seed: number) {
   let s = seed >>> 0 || 1;

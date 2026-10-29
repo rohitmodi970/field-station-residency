@@ -24,11 +24,13 @@ apps/residency-campaign/web-build/
 **/.env*.local
 !.env.example
 
-# Debug logs
+# Debug logs and cache
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log
+.turbo/
 
 # OS Files
 .DS_Store

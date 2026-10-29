@@ -4,7 +4,7 @@
 // starts and where it ends. Swipe or use the chevrons to move between months.
 
 import { useMemo, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { Entry } from "@/data/mira";
 import { iso } from "@/lib/f/store";
 import { EASE_OUT, I, SPRING, haptic } from "./ui";

@@ -11,10 +11,10 @@ import {
 // ── Motion ──
 export const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 export const SPRING = {
-  ui: { type: "spring" as const, duration: 0.24, bounce: 0 }, // small things: pills, toggles
-  move: { type: "spring" as const, duration: 0.34, bounce: 0 }, // things travelling across the screen
-  surface: { type: "spring" as const, duration: 0.38, bounce: 0.04 }, // a panel growing from a pill
-  flick: { type: "spring" as const, duration: 0.3, bounce: 0.18 }, // after a gesture carried momentum
+  ui: { type: "spring" as const, duration: 0.32, bounce: 0 }, // small things: pills, toggles
+  move: { type: "spring" as const, duration: 0.5, bounce: 0 }, // things travelling across the screen
+  surface: { type: "spring" as const, duration: 0.55, bounce: 0.04 }, // a panel growing from a pill
+  flick: { type: "spring" as const, duration: 0.4, bounce: 0.18 }, // after a gesture carried momentum
 };
 
 // ── Tool icons ──

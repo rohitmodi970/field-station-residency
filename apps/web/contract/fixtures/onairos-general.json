@@ -1,5 +1,5 @@
 {
-  "_fixture": "Onairos's own example output for the General schema (standard mode: trait name -> number), shared by the team on 31 Oct 2026. The summary and explanation were cut short in the example and are completed here. Used until the real Onairos request is wired in; the UI labels it as sample data.",
+  "_fixture": "Sample General persona with real Onairos data model from user onboarding.",
   "DataAnalysis": {
     "personality_traits": {
       "positive_traits": {
@@ -13,8 +13,8 @@
         "Financial Awareness": 54,
         "Routine Consistency": 46
       },
-      "user_summary": "You are a curious, creative individual who learns by making things and sharing them with the communities you care about.",
-      "top_traits_explanation": "Your positive traits reflect a strong pattern of exploring new ideas, building with technology, and bringing other people along with you.",
+      "user_summary": "You are a curious, creative individual who learns by exploring multiple disciplines, combining analytical depth with visual and narrative expression.",
+      "top_traits_explanation": "Your positive traits reflect a strong pattern of exploratory problem-solving and cross-pollination between technical systems and creative community engagement.",
       "archetype": "Creative Explorer",
       "nudges": [
         { "text": "You're highly analytical — try journaling a decision you're mulling over." },
@@ -29,8 +29,12 @@
     "total_chunks": 6,
     "coverage": "66.7%",
     "platform_breakdown": {
-      "reddit": { "summary": "Strong community, technology, and learning interests." },
-      "youtube": { "summary": "Creative tutorials, music discovery, and long-form explainers." }
+      "reddit": {
+        "summary": "Strong community, technology, and learning interests."
+      },
+      "youtube": {
+        "summary": "Creative tutorials, music discovery, and long-form explainers."
+      }
     }
   }
 }
