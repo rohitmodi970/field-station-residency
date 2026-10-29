@@ -74,8 +74,8 @@ export async function GET() {
             provenance: row.provenance || {},
             inferred: [],
             status: row.status === "user_approved" ? "approved" : "pending_review",
-            shared: row.sharing_consent ?? true,
-            persona: row.normalized_onairos_context || undefined,
+            shared: row.sharing_consent ?? false,
+            persona: (row.normalized_onairos_context && (row.normalized_onairos_context.archetype || row.normalized_onairos_context.summary || (Array.isArray(row.normalized_onairos_context.positive) && row.normalized_onairos_context.positive.length > 0))) ? row.normalized_onairos_context : undefined,
             updated_at: row.updated_at || new Date().toISOString(),
           };
 
@@ -144,17 +144,17 @@ export async function GET() {
       }
     }
 
-    // 5. Convert snapshots into Resident objects
-    const residents: Resident[] = snapshots.map((s) => residentFromSnapshot(s));
+    // 5. Convert visible snapshots into Resident objects
+    const residents: Resident[] = visibleSnaps.map((s) => residentFromSnapshot(s));
 
     // 6. Project graph
-    const graph = projectGraph(snapshots, connections, (s) => s.intent || s.problem || "Working focus");
+    const graph = projectGraph(visibleSnaps, connections, (s) => s.intent || s.problem || "Working focus");
     const duration = Math.round(performance.now() - start);
     console.log(`✅ [Graph Projected] ${graph.nodes.length} nodes, ${graph.edges.length} edges, ${residents.length} real residents generated in ${duration}ms`);
 
     return Response.json({
       ...graph,
-      snapshots,
+      snapshots: visibleSnaps,
       residents,
     });
   } catch (err: any) {

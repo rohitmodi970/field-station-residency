@@ -349,8 +349,13 @@ export const r = {
   async setSharePersona(v: boolean) {
     set({ sharePersona: v });
     const s = get().snapshot;
-    if (s?.status === "approved") set({ snapshot: await api.approve({ ...s, persona: publicPersona() }, s.shared) });
-    else if (s) set({ snapshot: { ...s, persona: publicPersona() } });
+    const persona = v && get().persona ? { ...get().persona!, private_growth: [], nudges: [] } : undefined;
+    if (s?.status === "approved") {
+      const approvedSnap = await api.approve({ ...s, persona }, s.shared);
+      set({ snapshot: approvedSnap });
+    } else if (s) {
+      set({ snapshot: { ...s, persona } });
+    }
   },
   setTab(tab: R["tab"]) {
     set({ tab });

@@ -31,7 +31,13 @@ export async function POST(req: NextRequest) {
     console.log(`🔒 [Approve] Decoupled consent setting -> sharing_consent: ${shared}`);
 
     const incomingPersona = incomingFields.persona !== undefined ? incomingFields.persona : body.persona;
-    const persona = incomingPersona !== undefined ? incomingPersona : existing?.normalized_onairos_context;
+    const sharePersona = typeof body.share_persona === "boolean"
+      ? body.share_persona
+      : typeof body.sharePersona === "boolean"
+        ? body.sharePersona
+        : (incomingPersona !== null && incomingPersona !== undefined && (typeof incomingPersona === "object" ? Object.keys(incomingPersona).length > 0 : true));
+    const persona = sharePersona ? (incomingPersona || existing?.normalized_onairos_context || null) : null;
+    console.log(`👁️ [Approve] Decoupled persona visibility -> share_persona: ${sharePersona}, hasPersona: ${!!persona}`);
 
     const updatedSnapshot = {
       user_id: residentId,
@@ -73,7 +79,7 @@ export async function POST(req: NextRequest) {
       status: "user_approved" as const,
       sharing_consent: shared,
       user_feedback: body.user_feedback,
-      normalized_onairos_context: persona || existing?.normalized_onairos_context || null,
+      normalized_onairos_context: sharePersona ? (persona || null) : null,
     };
 
     const saved = await saveResidencySnapshot(updatedSnapshot, body.snapshot_id || existing?.id);
@@ -84,7 +90,7 @@ export async function POST(req: NextRequest) {
       await supabaseAdmin
         .from('residency_participants')
         .update({
-          onairos_data: persona || undefined,
+          onairos_data: sharePersona ? (persona || undefined) : null,
           updated_at: new Date().toISOString(),
         })
         .eq('unique_id', residentId);
@@ -123,7 +129,7 @@ export async function POST(req: NextRequest) {
       inferred: [],
       status: "approved",
       shared: saved.sharing_consent,
-      persona: persona || existing?.normalized_onairos_context || undefined,
+      persona: (sharePersona && persona) ? persona : undefined,
       updated_at: saved.updated_at || new Date().toISOString(),
     };
 

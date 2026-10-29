@@ -125,6 +125,8 @@ export async function approve(s: Snapshot, shared: boolean): Promise<Snapshot> {
     snapshot_id: s.id,
     cohort_id: "dhun-oct-2026",
     sharing_consent: shared,
+    share_persona: !!s.persona,
+    sharePersona: !!s.persona,
     edited_fields: {
       intent: s.intent,
       problem: s.problem,
@@ -138,7 +140,7 @@ export async function approve(s: Snapshot, shared: boolean): Promise<Snapshot> {
       current_frontier: s.current_frontier,
       contribution: s.contribution,
       next_step: s.next_step,
-      persona: s.persona,
+      persona: s.persona ?? null,
     },
     fields: {
       intent: s.intent,
@@ -153,9 +155,9 @@ export async function approve(s: Snapshot, shared: boolean): Promise<Snapshot> {
       current_frontier: s.current_frontier,
       contribution: s.contribution,
       next_step: s.next_step,
-      persona: s.persona,
+      persona: s.persona ?? null,
     },
-    persona: s.persona,
+    persona: s.persona ?? null,
     approved: true,
     shared,
   };
