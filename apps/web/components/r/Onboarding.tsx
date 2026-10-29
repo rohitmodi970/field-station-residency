@@ -419,6 +419,16 @@ function MapCard({ onOpen, onRead }: { onOpen: () => void; onRead: () => void })
     const id = setInterval(() => setStep((x) => Math.min(x + 1, 4)), 2600);
     return () => clearInterval(id);
   }, [snapshot]);
+  // Once snapshot arrives from AI synthesis, guarantee ready is set and onRead triggers
+  useEffect(() => {
+    if (snapshot && !ready) {
+      const id = setTimeout(() => {
+        setReady(true);
+        onRead();
+      }, 350);
+      return () => clearTimeout(id);
+    }
+  }, [snapshot, ready, onRead]);
   const filled = snapshot ? PARTS.filter((k) => !isEmpty(snapshot, k)).length : 0;
   return (
     <button type="button" disabled={!ready} onClick={onOpen} className="press block w-full overflow-hidden rounded-[24px] bg-paper text-left disabled:active:scale-100" style={{ boxShadow: "var(--lift-1)" }}>

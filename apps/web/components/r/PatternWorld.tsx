@@ -45,10 +45,14 @@ type Bead = { x: number; y: number; r: number; art: Art; band: number };
 export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, interactive = true, layout: mode = "you" }: { nodes: WNode[]; edges: [string, string][]; focus: string | null; onTap?: (id: string | null) => void; onGrown?: () => void; interactive?: boolean; layout?: "you" | "cohort" | "tiers" }) {
   const cv = useRef<HTMLCanvasElement>(null);
   const props = useRef({ focus, onTap, onGrown });
+  const hasGrown = useRef(false);
   const wake = useRef<() => void>(() => {});
   useEffect(() => {
     props.current = { focus, onTap, onGrown };
     wake.current(); // a new focus is a reason to draw
+    if (hasGrown.current && onGrown) {
+      onGrown();
+    }
   });
   const cam = useRef<Camera & { vy: number; vp: number; idleAt: number }>({ yaw: 0, pitch: 0.12, zoom: 1, vy: 0, vp: 0, idleAt: 0 });
   const sig = nodes.map((n) => n.id + n.title).join("|") + edges.join("|");
@@ -119,6 +123,7 @@ export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, inte
       C.vp *= 0.94;
       if (!told && (reduce || t > GROWN_AT)) {
         told = true;
+        hasGrown.current = true;
         props.current.onGrown?.();
       }
 

@@ -80,12 +80,14 @@ export async function POST(req: Request) {
 
   let publicFindings = Array.isArray(body.public) ? body.public : [];
 
-  // If public findings not yet fetched but resident provided links, fetch them with Claude!
+  // If public findings not yet fetched but resident provided links, fetch them with Claude (bounded to 2.5s so synthesis never stalls)!
   if (publicFindings.length === 0 && cleanLinks.length > 0 && hasClaude()) {
     try {
-      console.log(`🌐 [Synthesize] Ingesting social media links (${cleanLinks.length}) for "${name}" via Claude readFootprint...`);
-      const fp = await readFootprint(name, cleanLinks);
-      if (fp.findings?.length) {
+      console.log(`🌐 [Synthesize] Ingesting social media links (${cleanLinks.length}) for "${name}" via Claude readFootprint (capped at 2.5s)...`);
+      const fpPromise = readFootprint(name, cleanLinks);
+      const fpTimeout = new Promise<null>((r) => setTimeout(() => r(null), 2500));
+      const fp = await Promise.race([fpPromise, fpTimeout]);
+      if (fp && fp.findings?.length) {
         publicFindings = fp.findings;
         console.log(`✅ [Synthesize] Ingested ${publicFindings.length} public social findings for intent snapshot:`, fp.read);
       }

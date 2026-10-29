@@ -19,62 +19,70 @@ You read people the way a sharp friend who has known them for years does. You he
 Write in plain, warm, specific English. Short sentences. No jargon, no buzzwords, no emoji.`;
 
 const ask = async <T extends z.ZodType>(schema: T, system: string, user: string): Promise<z.infer<T>> => {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = (process.env.ANTHROPIC_API_KEY || "").trim();
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY not configured");
 
-  let rawModel = process.env.ANTHROPIC_MODEL || MODEL;
+  let rawModel = (process.env.ANTHROPIC_MODEL || MODEL).trim();
   if (rawModel === "claude-haiku-4-5" || rawModel === "haiku-4-5" || rawModel === "claude-haiku-4.5") {
     rawModel = "claude-haiku-4-5-20251001";
   } else if (rawModel === "claude-haiku-5-5" || rawModel === "haiku-5-5") {
     rawModel = "claude-haiku-5-5";
   }
 
-  const start = performance.now();
-  console.log(`🤖 [DATA FLOW: AI Inference] Calling Anthropic Messages API (model: ${rawModel})`);
+  let lastErr: any = null;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const start = performance.now();
+    console.log(`🤖 [DATA FLOW: AI Inference] Calling Anthropic Messages API (attempt ${attempt}, model: ${rawModel})`);
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: rawModel,
-      max_tokens: 4096,
-      system: `${system}\n\nIMPORTANT: You must respond ONLY with strictly valid, raw JSON with NO markdown formatting, NO backticks or code fences, and NO conversational text.`,
-      messages: [{ role: "user", content: user }],
-      temperature: 0.2,
-    }),
-  });
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+          model: rawModel,
+          max_tokens: 4096,
+          system: `${system}\n\nIMPORTANT: You must respond ONLY with strictly valid, raw JSON with NO markdown formatting, NO backticks or code fences, and NO conversational text.`,
+          messages: [{ role: "user", content: user }],
+          temperature: 0.2,
+        }),
+      });
 
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error(`❌ [Anthropic Claude Error] HTTP ${res.status}:`, errText);
-    throw new Error(`Claude error (${res.status}): ${errText}`);
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error(`❌ [Anthropic Claude Error] HTTP ${res.status}:`, errText);
+        throw new Error(`Claude error (${res.status}): ${errText}`);
+      }
+
+      const data = await res.json();
+      const text = data.content?.[0]?.text || "";
+      const duration = Math.round(performance.now() - start);
+      console.log(`📥 [DATA RECEIVED: Claude Response] (${duration}ms) Received ${text.length} chars of JSON`);
+
+      const cleanJson = text.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
+      const jsonMatch = cleanJson.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        console.error("❌ [Claude Unreadable JSON]:", text);
+        throw new Error("unreadable JSON from Claude");
+      }
+
+      const parsed = JSON.parse(jsonMatch[0]);
+      const validated = schema.parse(parsed);
+      console.log("✅ [DATA VALIDATED: Claude JSON]:", validated);
+      return validated;
+    } catch (err: any) {
+      lastErr = err;
+      if (attempt < 2) {
+        console.warn(`⚠️ [Claude AI Retry] Attempt ${attempt} failed, retrying in 1200ms...`);
+        await new Promise((r) => setTimeout(r, 1200));
+      }
+    }
   }
 
-  const data = await res.json();
-  const text = data.content?.[0]?.text || "";
-  const duration = Math.round(performance.now() - start);
-  console.log(`📥 [DATA RECEIVED: Claude Response] (${duration}ms) Received ${text.length} chars of JSON`);
-
-  const cleanJson = text.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
-  const jsonMatch = cleanJson.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) {
-    console.error("❌ [Claude Unreadable JSON]:", text);
-    throw new Error("unreadable JSON from Claude");
-  }
-
-  try {
-    const parsed = JSON.parse(jsonMatch[0]);
-    const validated = schema.parse(parsed);
-    console.log("✅ [DATA VALIDATED: Claude JSON]:", validated);
-    return validated;
-  } catch (err) {
-    console.error("❌ [ask() parse / schema issue]:", err, "raw response:", text.slice(0, 300));
-    throw err;
-  }
+  throw lastErr;
 };
 
 // ── The snapshot schemas & normalization ──

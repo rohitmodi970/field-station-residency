@@ -215,7 +215,7 @@ export const r = {
   async synthesize() {
     set({ synth: "busy" });
     if (reading && get().footprint.status === "busy") {
-      await Promise.race([reading, new Promise((r) => setTimeout(r, 30000))]);
+      await Promise.race([reading, new Promise((r) => setTimeout(r, 3500))]);
     }
     const payload = input();
     console.log("🚀 [DATA FLOW: Sending to /api/residency/intent/synthesize]", {
