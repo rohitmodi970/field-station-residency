@@ -18,29 +18,50 @@ This repository is organized as a unified `pnpm` monorepo containing both the we
 ```text
 field-station-residency/
 ├── apps/
-│   ├── web/                     # Full Next.js Web App for Field Station Residency
-│   │   ├── app/                 # App Router (residency page, graph, and API endpoints)
-│   │   ├── components/r/        # Residency UI (Traits, Persona, Connection, Onboarding)
-│   │   ├── components/f/        # Living UI primitives (Glass, Bubbles, VoiceMode, Marks)
-│   │   ├── contract/            # Type definitions, v1.1 schemas, and cohort fixtures
-│   │   ├── lib/residency/       # Supabase persistence store and cohort graph builder
-│   │   ├── server/claude.ts     # Anthropic Claude inference engine (Haiku 4.5 / Opus)
-│   │   └── styles/              # Design tokens and residency styling
+│   ├── web/                         # Full Next.js Web App for Field Station Residency
+│   │   ├── app/                     # App Router
+│   │   │   ├── field-station-residency/ # Main residency experience entry point
+│   │   │   ├── (onboarding)/        # Multi-stage onboarding & baseline flows
+│   │   │   ├── connect/             # Connector and linking hub
+│   │   │   ├── residency/           # Living UI & 3D cohort graph view
+│   │   │   └── api/residency/       # Complete backend API suite
+│   │   │
+│   │   ├── components/              # Full component architecture
+│   │   │   ├── r/                   # Residency UI (Traits, Persona, Connection, Onboarding)
+│   │   │   ├── f/                   # Living UI primitives (Glass, Bubbles, VoiceMode, Marks)
+│   │   │   ├── onBoarding/          # Onboarding v2 flow, OnairosButton, step frames
+│   │   │   ├── companion/           # Proactive companion cards, toasts, and views
+│   │   │   ├── shared-cognition/    # Consent mediation, connections panel, identity blocks
+│   │   │   ├── voiceAnalysis/       # Emotion tabs, energy waveforms, speech analytics
+│   │   │   ├── audio-analysis/      # Acoustic visualizations and D3 mind maps
+│   │   │   ├── Journal/             # Audio reflection displays and analyzers
+│   │   │   ├── layout/              # ForcePageShell, Header, Navigation
+│   │   │   ├── Loader/              # Tactile loaders & BookPageTurner
+│   │   │   ├── spotlight/           # Greeting hero, insight cards, activity scores
+│   │   │   └── ui/                  # Ambient backgrounds, docks, dialogs, cards, tabs
+│   │   │
+│   │   ├── contract/                # Type definitions, v1.1 schemas, and cohort fixtures
+│   │   ├── lib/                     # Client stores, enrichment, analysis, and LLM utilities
+│   │   ├── services/                # Hume AI, Deepgram, and acoustic processing services
+│   │   ├── utilities/               # Prosody parsers, audio validation, and context helpers
+│   │   ├── server/claude.ts         # Anthropic Claude inference engine (Haiku 4.5 / Opus)
+│   │   └── styles/                  # Design tokens and residency styling
 │   │
-│   └── residency-campaign/      # Expo / React Native Mobile Application
-│       ├── app/                 # Expo Router file-based screens
-│       ├── src/components/      # Skia canvas, reanimated cards, and tactile UI
-│       ├── src/stores/          # Zustand persistent state with MMKV / AsyncStorage
-│       └── src/lib/             # Spherical math, audio metering, and API client
+│   └── residency-campaign/          # Expo / React Native Mobile Application
+│       ├── app/                     # Expo Router file-based screens
+│       ├── src/components/f/        # Skia canvas, Living UI marks, and bubbles
+│       ├── src/components/r/        # Native swipe cards, persona views, and onboarding
+│       ├── src/stores/              # Zustand persistent state with MMKV / AsyncStorage
+│       └── src/lib/                 # Spherical math, audio metering, and API client
 │
-├── docs/                        # Complete architectural and implementation guides
-│   ├── PORTING.md               # Guide for porting web primitives to React Native / Skia
-│   ├── API_SPECIFICATION.md     # v1.1 residency contract and endpoint reference
-│   └── ONBOARDING_ARCHITECTURE.md # Intent synthesis & cohort graph projection pipeline
+├── docs/                            # Complete architectural and implementation guides
+│   ├── PORTING.md                   # Guide for porting web primitives to React Native / Skia
+│   ├── API_SPECIFICATION.md         # v1.1 residency contract and endpoint reference
+│   └── ONBOARDING_ARCHITECTURE.md   # Intent synthesis & cohort graph projection pipeline
 │
-├── .env.example                 # Environment variable templates
-├── pnpm-workspace.yaml          # Monorepo workspace configuration
-└── LICENSE                      # MIT License
+├── .env.example                     # Environment variable templates (zero secrets committed)
+├── pnpm-workspace.yaml              # Monorepo workspace configuration
+└── LICENSE                          # MIT License
 ```
 
 ---
@@ -65,18 +86,23 @@ Real-time audio processing measures energy levels, speech pace (WPM), and cognit
 * Nodes grow organically based on verified connections, complementary approaches, and mutual offers.
 * High-performance canvas and WebGL rendering with smooth touch and drag navigation.
 
-### 4. 🤝 Grounded Peer Connection Engine
+### 4. 🤝 Grounded Peer Connection & Shared Cognition
 * Discovers high-affinity matches across the residency based on four criteria:
   * `shared_problem`
   * `complementary_approach`
   * `shared_exploration`
   * `potential_contribution`
 * Cites exact textual evidence from both residents and generates low-friction, casual icebreakers.
+* **Shared Cognition Engine**: Granular consent controls, shared journal tabs, and privacy-first mediation.
 
 ### 5. 🤖 Grounded Companion Agent
 * A dedicated 1-on-1 dialogue partner with longitudinal memory of the resident's intent, open questions, and recent journal moments.
 * Cross-pollinates insights with nearby Dhun cohort members.
 * Auto-captures key breakthroughs into the resident's memory stream.
+
+### 6. 📊 Acoustic & Emotion Analysis (Hume AI + Deepgram)
+* Multi-modal prosody measurement analyzing 48+ emotional dimensions.
+* Dynamic pitch, pause, and pace telemetry correlated with user cognitive reflections.
 
 ---
 
@@ -102,7 +128,7 @@ Copy `.env.example` to `apps/web/.env.local`:
 cp .env.example apps/web/.env.local
 ```
 
-Fill in your API keys:
+Fill in your API keys (none are committed to git):
 * `ANTHROPIC_API_KEY`: Anthropic API key for Claude inference.
 * `NEXT_PUBLIC_SUPABASE_URL` & `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase database connection.
 * `SUPABASE_SERVICE_ROLE_KEY`: Admin key for server-side persistence.

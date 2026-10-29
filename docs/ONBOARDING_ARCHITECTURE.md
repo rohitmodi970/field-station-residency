@@ -50,3 +50,4 @@ flowchart TD
   * Reads current intent, frontier, archetype, strengths, and recent journal moments.
 * Recommends cohort peers by name when complementary skills or overlapping problems arise.
 * Captures architectural insights into permanent memory via auto-generated `note` entries.
+

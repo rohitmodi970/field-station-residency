@@ -13,8 +13,16 @@ apps/residency-campaign/web-build/
 
 # Environment Variables
 .env
+.env.*
+*.env
+*.env.*
 .env.local
 .env*.local
+**/.env
+**/.env.*
+**/.env.local
+**/.env*.local
+!.env.example
 
 # Debug logs
 npm-debug.log*
@@ -25,3 +33,4 @@ pnpm-debug.log*
 # OS Files
 .DS_Store
 Thumbs.db
+
