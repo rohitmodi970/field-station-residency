@@ -1,0 +1,45 @@
+// apps/web/lib/residency/fixtures/onairosFixture.ts
+// Known-good Onairos General Persona fixture with real Onairos data model for offline resilience & demo reliability
+
+export const ONAIROS_GENERAL_PERSONA_FIXTURE = {
+  success: true,
+  model_id: "b2d09404-9af0-4272-b755-35b5bc9edc16",
+  source_badges: ["🗣️ Your answers", "🌐 Onairos Connect", "🐱 Github", "📱 Reddit", "▶️ YouTube"],
+  DataAnalysis: {
+    personality_traits: {
+      positive_traits: {
+        "Creative Problem Solving": 92,
+        "Science and Technology Enthusiasm": 88,
+        "Community Engagement": 85,
+        "Visual Storytelling": 78
+      },
+      traits_to_improve: {
+        "Structured Planning": 65,
+        "Financial Awareness": 54,
+        "Routine Consistency": 46
+      },
+      user_summary: "You are a curious, creative individual who learns by exploring multiple disciplines, combining analytical depth with visual and narrative expression.",
+      top_traits_explanation: "Your positive traits reflect a strong pattern of exploratory problem-solving and cross-pollination between technical systems and creative community engagement.",
+      archetype: "Creative Explorer",
+      nudges: [
+        { text: "You're highly analytical — try journaling a decision you're mulling over." },
+        { text: "Consider dedicating time to purely enjoyable, less analytical activities — it can refresh your perspective." }
+      ]
+    }
+  },
+  metadata: {
+    total_items_analyzed: 847,
+    items_sampled: 420,
+    chunks_processed: 4,
+    total_chunks: 6,
+    coverage: "66.7%",
+    platform_breakdown: {
+      reddit: {
+        summary: "Strong community, technology, and learning interests."
+      },
+      youtube: {
+        summary: "Creative tutorials, music discovery, and long-form explainers."
+      }
+    }
+  }
+};

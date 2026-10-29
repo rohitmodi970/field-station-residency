@@ -1,0 +1,17 @@
+{
+  "name": "field-station-residency-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Field Station Residency — Autonomous Intent Synthesis, Cohort Graph, and Companion System",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:mobile": "pnpm --filter residency-campaign start",
+    "build": "pnpm --filter web build",
+    "typecheck": "pnpm --filter web typecheck",
+    "lint": "pnpm -r run lint"
+  },
+  "packageManager": "pnpm@11.18.0",
+  "author": "Rohit Modi <rohitkumar970ss@gmail.com>",
+  "license": "MIT"
+}

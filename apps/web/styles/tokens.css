@@ -1,0 +1,79 @@
+/* Force tokens: the light version.
+   Built the Refactoring UI way: a full grey scale doing almost all the work, one primary (ink),
+   one accent (blue, for state only), and five theme hues, each with a tint, a main and a deep
+   shade. Colour lives in the themes; the chrome stays neutral. */
+
+:root {
+  /* Greys: nine steps, neutral */
+  /* Warm, like paper, never pure white or pure black */
+  --grey-0: #ffffff;
+  --grey-50: #f6f5f3;
+  --grey-100: #efeeeb;
+  --grey-150: #e9e7e4;
+  --grey-200: #e1dfdb;
+  --grey-300: #d1cfca;
+  --grey-400: #b1afaa;
+  --grey-500: #8b8985;
+  --grey-600: #6b6966;
+  --grey-700: #4a4846;
+  --grey-900: #1c1b1a;
+
+  /* Roles */
+  --canvas: var(--grey-50); /* the page */
+  --paper: var(--grey-0); /* anything raised: pills, cards, sheets, the composer */
+  --ink: var(--grey-900); /* text, primary buttons */
+  --ink-2: var(--grey-700); /* supporting text */
+  --ink-3: var(--grey-600); /* meta, placeholders: 5.0:1 on the canvas */
+  --ink-4: var(--grey-400); /* disabled, chevrons */
+  --fill: var(--grey-100); /* bubbles, inset controls, grouped lists */
+  --fill-2: var(--grey-150); /* pressed */
+  --line: rgba(28, 27, 26, 0.06);
+  --scrim: rgba(28, 27, 26, 0.24);
+
+  /* Accent: state only (unread, selected, links) */
+  --blue: #3478f6;
+
+  /* Theme hues: tint (backgrounds), main (drops, dots), deep (text on tint) */
+  --amber-1: #fdf1e3;
+  --amber-4: #f2b26e;
+  --amber-7: #8f5317;
+  --rose-1: #fcebee;
+  --rose-4: #eb96a8;
+  --rose-7: #973449;
+  --sage-1: #e9f3e7;
+  --sage-4: #8dc08b;
+  --sage-7: #3b6a39;
+  --sky-1: #e5f0fb;
+  --sky-4: #76ade2;
+  --sky-7: #245a8f;
+  --lilac-1: #efecfb;
+  --lilac-4: #a596e2;
+  --lilac-7: #4d3e97;
+
+  /* Depth: soft and wide, the way Wabi lifts things off the page. Never borders. */
+  --lift-1: 0 1px 2px rgba(28, 27, 26, 0.03), 0 8px 24px rgba(28, 27, 26, 0.06);
+  --lift-2: 0 2px 6px rgba(28, 27, 26, 0.04), 0 24px 48px -12px rgba(28, 27, 26, 0.16);
+
+  /* Radius: three steps and the pill */
+  --r-chip: 999px;
+  --r-bubble: 22px;
+  --r-card: 28px;
+  --r-panel: 36px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* One font: the phone's own (SF Pro on iPhone). Syne Mono only for dates. */
+  --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Helvetica Neue", sans-serif;
+  --font-num: var(--font-syne-mono), ui-monospace, "SF Mono", monospace;
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --ink-2: #333333;
+    --ink-3: #555555;
+    --line: rgba(26, 26, 26, 0.2);
+  }
+}
