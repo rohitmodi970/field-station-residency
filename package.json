@@ -13,6 +13,31 @@
   },
   "packageManager": "pnpm@11.18.0",
   "author": "Rohit Modi <rohitkumar970ss@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "bcrypt",
+      "canvas",
+      "protobufjs",
+      "tesseract.js",
+      "unrs-resolver"
+    ],
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "react": "19",
+        "react-dom": "19"
+      }
+    },
+    "overrides": {
+      "react": "19.1.0",
+      "react-dom": "19.1.0"
+    },
+    "ignoredBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "core-js",
+      "esbuild",
+      "ffmpeg-static",
+      "sharp"
+    ]
+  }
 }
-

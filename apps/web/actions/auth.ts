@@ -141,7 +141,7 @@ async function createSessionRecord(userId: string) {
 /**
  * Sign up a user with email/password
  */
-export async function signUpWithEmail(payload: SignUpData) {
+export async function signUpWithEmail(payload: SignUpData): Promise<{ data: any; error: any }> {
   const supabase = await createClient();
 
   const username = payload.username || payload.email.split("@")[0]?.toLowerCase() || "user";
@@ -185,7 +185,7 @@ export async function signUpWithEmail(payload: SignUpData) {
 /**
  * Sign in a user with email/password
  */
-export async function signInWithEmail(payload: SignInData & { encryptionSalt?: string }) {
+export async function signInWithEmail(payload: SignInData & { encryptionSalt?: string }): Promise<{ data: any; error: any }> {
   const supabase = await createClient();
 
   try {
