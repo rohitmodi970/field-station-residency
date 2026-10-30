@@ -46,42 +46,42 @@ function Strengths({ top, mine, p }: { top: OnairosNormalized["positive"]; mine:
 
 // What Onairos actually read: how much of the data, and what each platform showed. A meter,
 // because it's about the data, not a measure of the person.
-function WhatItRead({ p, mine }: { p: OnairosNormalized; mine: boolean }) {
-  const c = p.coverage;
-  const share = c.sampled != null && c.analyzed ? c.sampled / c.analyzed : c.label ? parseFloat(c.label) / 100 : null;
-  if (share == null && !p.sources?.length) return null;
-  return (
-    <figure className="mt-2 rounded-[28px] bg-paper p-5" style={{ boxShadow: "var(--lift-1)" }}>
-      <figcaption className="t-meta text-ink-3">What Onairos read</figcaption>
-      {share != null && (
-        <>
-          <p className="mt-1 t-body font-semibold text-ink">
-            {c.sampled != null && c.analyzed != null ? `${c.sampled.toLocaleString("en")} of ${mine ? "your" : "their"} ${c.analyzed.toLocaleString("en")} items` : `${Math.round(share * 100)}% of ${mine ? "your" : "their"} data`}
-          </p>
-          <div className="mt-3 h-3 w-full rounded-[6px] bg-fill" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(share * 100)} aria-label="How much Onairos read">
-            <div className="h-full rounded-[6px]" style={{ width: `${Math.max(4, Math.min(100, share * 100))}%`, ...PAINT }} />
-          </div>
-          <p className="mt-2 t-meta text-ink-3">{c.label ?? `${Math.round(share * 100)}%`} coverage · a read from a sample, so it can be wrong</p>
-        </>
-      )}
-      {!!p.sources?.length && (
-        <ul className="mt-4 flex flex-col">
-          {p.sources.map((x, i) => (
-            <li key={x.platform} className={`flex gap-3 py-3 ${i ? "border-t border-[var(--fill)]" : ""}`}>
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-fill t-label font-semibold text-ink-2" aria-hidden>
-                {x.platform[0]}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block t-label font-medium text-ink">{x.platform}</span>
-                <span className="block t-label text-ink-2">{x.summary}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </figure>
-  );
-}
+// function WhatItRead({ p, mine }: { p: OnairosNormalized; mine: boolean }) {
+//   const c = p.coverage;
+//   const share = c.sampled != null && c.analyzed ? c.sampled / c.analyzed : c.label ? parseFloat(c.label) / 100 : null;
+//   if (share == null && !p.sources?.length) return null;
+//   return (
+//     <figure className="mt-2 rounded-[28px] bg-paper p-5" style={{ boxShadow: "var(--lift-1)" }}>
+//       <figcaption className="t-meta text-ink-3">What Onairos read</figcaption>
+//       {share != null && (
+//         <>
+//           <p className="mt-1 t-body font-semibold text-ink">
+//             {c.sampled != null && c.analyzed != null ? `${c.sampled.toLocaleString("en")} of ${mine ? "your" : "their"} ${c.analyzed.toLocaleString("en")} items` : `${Math.round(share * 100)}% of ${mine ? "your" : "their"} data`}
+//           </p>
+//           {/* <div className="mt-3 h-3 w-full rounded-[6px] bg-fill" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(share * 100)} aria-label="How much Onairos read">
+//             <div className="h-full rounded-[6px]" style={{ width: `${Math.max(4, Math.min(100, share * 100))}%`, ...PAINT }} />
+//           </div> */}
+//           <p className="mt-2 t-meta text-ink-3">{c.label ?? `${Math.round(share * 100)}%`} coverage · a read from a sample, so it can be wrong</p>
+//         </>
+//       )}
+//       {!!p.sources?.length && (
+//         <ul className="mt-4 flex flex-col">
+//           {p.sources.map((x, i) => (
+//             <li key={x.platform} className={`flex gap-3 py-3 ${i ? "border-t border-[var(--fill)]" : ""}`}>
+//               <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-fill t-label font-semibold text-ink-2" aria-hidden>
+//                 {x.platform[0]}
+//               </span>
+//               <span className="min-w-0 flex-1">
+//                 <span className="block t-label font-medium text-ink">{x.platform}</span>
+//                 <span className="block t-label text-ink-2">{x.summary}</span>
+//               </span>
+//             </li>
+//           ))}
+//         </ul>
+//       )}
+//     </figure>
+//   );
+// }
 
 export default function Traits({ p, who, children }: { p: OnairosNormalized; who?: string; children?: React.ReactNode }) {
   const top = p.positive.slice(0, 5);
@@ -112,7 +112,7 @@ export default function Traits({ p, who, children }: { p: OnairosNormalized; who
       </div>
 
       {top.length > 0 && <Strengths top={top} mine={mine} p={p} />}
-      <WhatItRead p={p} mine={mine} />
+      {/* <WhatItRead p={p} mine={mine} /> */}
 
       {children}
     </section>
