@@ -555,7 +555,7 @@ export default function Persona({ onBack, onContinue }: { onBack?: () => void; o
 
         {!!s.noticed?.length && (
           <section className="mt-8">
-            <h3 className="mb-3 flex items-center gap-2 px-1 t-body font-medium text-ink">
+            <h3 className="mb-4 flex items-center gap-2 px-1 t-body font-medium text-ink">
               <ForceMark size={26} /> What Force noticed
               <span className="t-meta font-normal text-ink-3">swipe</span>
             </h3>

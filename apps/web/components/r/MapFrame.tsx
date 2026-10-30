@@ -4,7 +4,7 @@
 // docks underneath (or over the bottom of the map, full screen). The same frame for your own
 // map and the residency's graph.
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { WNode } from "@/data/residency";
 import PatternWorld from "./PatternWorld";
@@ -14,6 +14,16 @@ export default function MapFrame({ nodes, edges, layout, height, title, card }: 
   const [focus, setFocus] = useState<string | null>(null);
   const [full, setFull] = useState(false);
   const n = nodes.find((x) => x.id === focus) ?? null;
+  // Full screen, the card sits over the bottom of the map: the map moves up out of its way.
+  const dock = useRef<HTMLDivElement>(null);
+  const [covered, setCovered] = useState(0);
+  useEffect(() => {
+    const el = dock.current;
+    if (!full || !el) return setCovered(0);
+    const ro = new ResizeObserver(() => setCovered(el.offsetHeight ? el.offsetHeight + 12 + 8 : 0));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [full]);
   const hint = !n && <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-fill px-3 py-[6px] t-meta text-ink-3">Drag to turn · tap a node</span>;
   return (
     <div>
@@ -39,9 +49,9 @@ export default function MapFrame({ nodes, edges, layout, height, title, card }: 
               </button>
             </header>
             <div className="relative min-h-0 flex-1">
-              <PatternWorld nodes={nodes} edges={edges} focus={focus} onTap={setFocus} layout={layout} />
+              <PatternWorld nodes={nodes} edges={edges} focus={focus} onTap={setFocus} layout={layout} bottom={n ? covered : 0} />
               {hint}
-              <div className="absolute inset-x-4 bottom-3">
+              <div ref={dock} className="absolute inset-x-4 bottom-3">
                 <AnimatePresence initial={false} mode="popLayout">
                   {n && card(n, setFocus)}
                 </AnimatePresence>

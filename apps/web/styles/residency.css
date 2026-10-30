@@ -293,22 +293,20 @@ button:disabled {
   background: linear-gradient(to top, rgb(246 245 243) 0%, rgb(246 245 243 / 0.75) 40%, rgb(246 245 243 / 0) 100%);
 }
 
+/* A row that scrolls sideways without cutting off its children's shadows: room above and
+   below for the softest lift, given back with a negative margin. Only the vertical margin is
+   set here, so a row with -mx-4 still runs out to the screen edges (this rule sits outside
+   Tailwind's layers and would otherwise beat it, clipping cards 16px short of the edge). */
 .scroll-row {
   display: flex;
   gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 10px 16px;
-  margin: -10px 0;
+  padding: 28px 16px 36px;
+  margin-block: -28px -36px;
 }
 .scroll-row::-webkit-scrollbar {
   display: none;
-}
-.scroll-row {
-  pointer-events: none;
-}
-.scroll-row > * {
-  pointer-events: auto;
 }
 .scroll-row::after {
   content: "";

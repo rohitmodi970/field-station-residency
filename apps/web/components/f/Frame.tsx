@@ -47,18 +47,33 @@ export function useViewport() {
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv || window.matchMedia("(min-width: 768px)").matches) return;
+    // Only a field being typed in moves the app. iOS 26 can go on reporting a short visual
+    // viewport after the keyboard has gone (or after a sign-in tab returns), and following it
+    // then leaves the bottom bar under Safari's toolbar.
+    const typing = () => !!(document.activeElement as HTMLElement | null)?.matches?.("input, textarea, [contenteditable=true], [contenteditable='']");
     const on = () => {
+      if (window.scrollY || window.scrollX) window.scrollTo(0, 0);
+      if (!typing()) return setVp((v) => (v.h === null && !v.top && !v.kb ? v : { h: null, top: 0, kb: false }));
       const kb = window.innerHeight - vv.height > 120;
       setVp({ h: vv.height, top: vv.offsetTop, kb });
-      // iOS scrolls the page to show a focused field; we already moved the field, so undo it.
-      if (window.scrollY) window.scrollTo(0, 0);
+    };
+    // Focus moves before the keyboard does: look again once it has settled.
+    let t = 0;
+    const later = () => {
+      clearTimeout(t);
+      t = window.setTimeout(on, 120);
     };
     on();
     vv.addEventListener("resize", on);
     vv.addEventListener("scroll", on);
+    document.addEventListener("focusin", later);
+    document.addEventListener("focusout", later);
     return () => {
+      clearTimeout(t);
       vv.removeEventListener("resize", on);
       vv.removeEventListener("scroll", on);
+      document.removeEventListener("focusin", later);
+      document.removeEventListener("focusout", later);
     };
   }, []);
   return vp;

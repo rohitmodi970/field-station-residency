@@ -42,13 +42,13 @@ type Bead = { x: number; y: number; r: number; art: Art; band: number };
 
 // layout: "you" puts you in the middle of your own map; "cohort" spreads everyone out;
 // "tiers" is the cohort on three rings (people, intent, approach), every name shown.
-export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, interactive = true, layout: mode = "you" }: { nodes: WNode[]; edges: [string, string][]; focus: string | null; onTap?: (id: string | null) => void; onGrown?: () => void; interactive?: boolean; layout?: "you" | "cohort" | "tiers" }) {
+export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, interactive = true, layout: mode = "you", bottom = 0 }: { nodes: WNode[]; edges: [string, string][]; focus: string | null; onTap?: (id: string | null) => void; onGrown?: () => void; interactive?: boolean; layout?: "you" | "cohort" | "tiers"; bottom?: number }) {
   const cv = useRef<HTMLCanvasElement>(null);
-  const props = useRef({ focus, onTap, onGrown });
+  const props = useRef({ focus, onTap, onGrown, bottom });
   const hasGrown = useRef(false);
   const wake = useRef<() => void>(() => {});
   useEffect(() => {
-    props.current = { focus, onTap, onGrown };
+    props.current = { focus, onTap, onGrown, bottom };
     wake.current(); // a new focus is a reason to draw
     if (hasGrown.current && onGrown) {
       onGrown();
@@ -88,6 +88,8 @@ export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, inte
     let raf = 0;
     let alive = true;
     let dragging = false;
+    let lift = 0; // eased toward props.current.bottom
+    let liftAt = 0;
     const hits: { n: PNode; x: number; y: number; r: number }[] = [];
 
     const size = () => {
@@ -113,6 +115,12 @@ export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, inte
         return;
       }
       const t = (now - born) / 1000;
+      // The covered strip, eased (about 0.3s, no overshoot); never more than 60% of the map.
+      const want = Math.min(props.current.bottom, H * 0.6);
+      const dt = liftAt ? Math.min(64, now - liftAt) : 16;
+      liftAt = now;
+      lift = reduce || Math.abs(want - lift) < 0.5 ? want : lift + (want - lift) * (1 - Math.exp(-dt / 70));
+      const Hv = H - lift;
       // On a big screen (the pitch), nodes, strands and names grow with it.
       const big = Math.max(1, Math.min(1.8, Math.min(W, H) / 420));
 
@@ -142,7 +150,7 @@ export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, inte
 
       const P = new Map(world.map((n) => {
         const g = reduce ? 1 : growth(n.kind, t, order);
-        return [n.id, { ...project(n.p, C, W, H, 0.25 + 0.75 * g), g }];
+        return [n.id, { ...project(n.p, C, W, Hv, 0.25 + 0.75 * g), g }];
       }));
       const beads: Bead[] = [];
       edges.forEach(([ai, bi], ei) => {
@@ -157,7 +165,7 @@ export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, inte
         for (let i = 1; i < steps; i++) {
           const u = i / steps;
           if (u > b.g) break;
-          const q = project([A.p[0] + (B.p[0] - A.p[0]) * u, A.p[1] + (B.p[1] - A.p[1]) * u, A.p[2] + (B.p[2] - A.p[2]) * u], C, W, H, 0.25 + 0.75 * b.g);
+          const q = project([A.p[0] + (B.p[0] - A.p[0]) * u, A.p[1] + (B.p[1] - A.p[1]) * u, A.p[2] + (B.p[2] - A.p[2]) * u], C, W, Hv, 0.25 + 0.75 * b.g);
           const wave = 0.5 + 0.6 * Math.abs(Math.sin(u * len * 0.28 + ei * 1.7));
           beads.push({ x: q.x, y: q.y, r: 1.3 * big * q.s * wave, art: B.art, band: bandFor(q.z, lit(ai) && lit(bi)) });
         }
@@ -255,7 +263,7 @@ export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, inte
           ctx.beginPath();
           for (let i = 0; i <= 96; i++) {
             const a = (i / 96) * Math.PI * 2;
-            const q = project([Math.cos(a) * r, Math.sin(a) * r * 0.92, 0.4], C, W, H, 1);
+            const q = project([Math.cos(a) * r, Math.sin(a) * r * 0.92, 0.4], C, W, Hv, 1);
             if (i) ctx.lineTo(q.x, q.y);
             else ctx.moveTo(q.x, q.y);
           }
@@ -291,7 +299,7 @@ export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, inte
           for (const [sx, sy] of spots) {
             const x = Math.max(w / 2 + 4, Math.min(W - w / 2 - 4, sx));
             const box: [number, number, number, number] = [x - w / 2 - 3, sy - l.size, x + w / 2 + 3, sy + 3];
-            if (box[1] < 2 || box[3] > H - 2) continue;
+            if (box[1] < 2 || box[3] > Hv - 2) continue;
             let cost = placed.some((p) => box[0] < p[2] && box[2] > p[0] && box[1] < p[3] && box[3] > p[1]) ? 1000 : 0;
             for (const d of discs) if (d.id !== l.id && hitsBox(box, d.x, d.y, d.r)) cost += 60;
             for (const b of beads) if (b.band !== DIM && hitsBox(box, b.x, b.y, b.r)) cost += 2;
@@ -312,7 +320,8 @@ export default function PatternWorld({ nodes, edges, focus, onTap, onGrown, inte
         });
       ctx.globalAlpha = 1;
       // Keep going only while something is moving; otherwise rest on this frame.
-      const moving = !told || dragging || Math.abs(C.vy) > 0.0003 || Math.abs(C.vp) > 0.0003 || foc !== lastFoc;
+      const moving = !told || dragging || Math.abs(C.vy) > 0.0003 || Math.abs(C.vp) > 0.0003 || foc !== lastFoc || lift !== Math.min(props.current.bottom, H * 0.6);
+      if (!moving) liftAt = 0;
       lastFoc = foc;
       raf = moving && (interactive || !told) ? requestAnimationFrame(draw) : 0;
     };

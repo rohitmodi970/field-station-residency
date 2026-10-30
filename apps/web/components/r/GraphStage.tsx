@@ -5,7 +5,7 @@
 // inside them, and the approaches in the middle where people meet. Not part of a resident's
 // flow; it's shown at the end. Tap any node for what Force can say about it.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CONNECTION_LABEL, isConnection } from "@/contract/residency";
 import { cohortWorld, residentById, type WNode } from "@/data/residency";
@@ -28,6 +28,16 @@ export default function GraphStage() {
   const count = (k: WNode["kind"][]) => world.nodes.filter((x) => k.includes(x.kind)).length;
   const links = graph.edges.filter(isConnection);
   const n = focus ? (byId.get(focus) ?? null) : null;
+  // The card covers the bottom of the graph: the graph moves up out of its way.
+  const card = useRef<HTMLDivElement>(null);
+  const [covered, setCovered] = useState(0);
+  useEffect(() => {
+    const el = card.current;
+    if (!el) return setCovered(0);
+    const ro = new ResizeObserver(() => setCovered(el.offsetHeight + 24 + 12));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [focus]);
 
   const read = (x: WNode): { head: string; body: string } | null => {
     if (x.kind === "theme") {
@@ -74,10 +84,10 @@ export default function GraphStage() {
         <li className="text-ink-3">Tap anything · drag to turn</li>
       </ul>
       <div className="relative min-h-0 flex-1">
-        <PatternWorld nodes={world.nodes} edges={world.edges} focus={focus} onTap={setFocus} layout="tiers" />
+        <PatternWorld nodes={world.nodes} edges={world.edges} focus={focus} onTap={setFocus} layout="tiers" bottom={n ? covered : 0} />
         <AnimatePresence>
           {n && (
-            <motion.div key={n.id} className="absolute bottom-6 left-1/2 w-[min(440px,calc(100%-32px))] -translate-x-1/2 rounded-[24px] bg-paper p-5" style={{ boxShadow: "var(--lift-2)" }} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.1 } }} transition={SPRING.ui}>
+            <motion.div ref={card} key={n.id} className="absolute bottom-6 left-1/2 w-[min(440px,calc(100%-32px))] -translate-x-1/2 rounded-[24px] bg-paper p-5" style={{ boxShadow: "var(--lift-2)" }} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.1 } }} transition={SPRING.ui}>
               <div className="flex items-start gap-3">
                 <span className="min-w-0 flex-1">
                   <span className="block t-meta text-ink-3">{n.kind === "theme" ? "Approach" : n.kind === "intent" ? "Intent" : "Person"}</span>
