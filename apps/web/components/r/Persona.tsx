@@ -173,20 +173,8 @@ function Swipe({ onRight, onLeft, right, left, children, className = "", style, 
     </div>
   );
 }
-      {/* The same choices without a swipe, for keyboards and screen readers */}
-      <span className="sr-only">
-        {onRight && (
-          <button type="button" onClick={onRight}>
-            {right}
-          </button>
-        )}
-        <button type="button" onClick={onLeft}>
-          {left}
-        </button>
-      </span>
-    </div>
-  );
-}
+
+
 
 // ── The four parts ──
 
