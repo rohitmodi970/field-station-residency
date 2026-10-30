@@ -105,6 +105,7 @@ export default function OnairosConnectFork({
     });
 
     setRawOnairosResult(result); // DEBUG: capture raw SDK result
+    if (typeof window !== 'undefined') (window as any).__onairos = result;
     // Fire raw event hook immediately — before any processing
     onRawSdkEvent?.(result);
 

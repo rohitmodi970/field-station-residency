@@ -36,7 +36,7 @@ interface OnairosSdkConnectorProps {
   testMode?: boolean;
   allowedPlatforms?: string[] | null;
   webpageName?: string;
-  requestData?: any;
+  requestData?: string[];
   buttonText?: string;
   onComplete: (data: any, exported?: OnairosExportedData) => void;
   onError?: (err: any) => void;
@@ -62,7 +62,7 @@ export default function OnairosSdkConnector({
   testMode = false,
   allowedPlatforms = null,
   webpageName = 'Force',
-  requestData = ['personalization'],
+  requestData = ['preferences', 'personality'],
   buttonText,
   onComplete,
   onError,
@@ -159,46 +159,17 @@ export default function OnairosSdkConnector({
         buttonText={buttonText || (testMode ? "Connect Accounts (Test Mode)" : "Connect Accounts")}
         textColor="white"
         onComplete={async (result: any) => {
-          // Unconditional styled raw data logging in browser console (persists in production)
-          console.log(
-            "%c 🚀 [ONAIROS SERVER RAW RESULT] 🚀 ",
-            "background: #7c3aed; color: #ffffff; font-size: 13px; font-weight: bold; padding: 4px 8px; border-radius: 4px;",
-            result
-          );
-          console.log("🔥 [ONAIROS RAW apiResponse]:", result?.apiResponse);
-          console.log("🔥 [ONAIROS RAW userData]:", result?.userData);
-          console.log("🎉 [OnairosSdkConnector] onComplete summary:", {
-            keys: result ? Object.keys(result) : [],
-            hasApiResponse: !!(result?.apiResponse && Object.keys(result.apiResponse || {}).length > 0),
-            hasUserData: !!result?.userData,
-            hasConnectedSources: Array.isArray(result?.connectedSources) && result.connectedSources.length > 0,
-            token: result?.token ? `${String(result.token).slice(0, 16)}…` : "none",
-            apiUrl: result?.apiUrl || "none",
-          });
-
-          // Expose to window for instant live inspection in browser console
-          if (typeof window !== "undefined") {
-            (window as any).__ONAIROS_LAST_RESULT__ = result;
-            console.log("💡 Tip: Type window.__ONAIROS_LAST_RESULT__ in console to inspect the full raw object.");
-          }
-
+          if (typeof window !== 'undefined') (window as any).__onairos = result;
           // Automatically extract and export consented data (per llm.txt §1)
           try {
             const exported = await exportOnairosData(result);
-            console.log(
-              "%c 🎯 [ONAIROS EXPORTED NORMALIZED DATA] 🎯 ",
-              "background: #059669; color: #ffffff; font-size: 13px; font-weight: bold; padding: 4px 8px; border-radius: 4px;",
-              exported
-            );
-            if (typeof window !== "undefined") {
-              (window as any).__ONAIROS_LAST_EXPORTED__ = exported;
-            }
             onComplete(result, exported);
           } catch (exportErr) {
             console.warn("[OnairosSdkConnector] exportOnairosData fallback note:", exportErr);
             onComplete(result);
           }
         }}
+        onError={onError}
       />
     </div>
   );
