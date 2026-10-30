@@ -213,7 +213,10 @@ export async function exportOnairosData(
           Authorization: `Bearer ${result.token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({
+          accessToken: result.token || result.accessToken || '',
+          token: result.token || result.accessToken || '',
+        }),
       });
       if (response.ok) {
         payload = await response.json();
@@ -349,7 +352,7 @@ export async function handleOnairosComplete(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         token: exported.token || 'onairos-token-' + Date.now(),
-        approved: result.approved || result.approvedData || ['personalization'],
+        approved: result.approved || result.approvedData || ['preferences', 'personality'],
         apiResponse: {
           ...(exported.traits ? { personality: exported.traits } : {}),
           ...(exported.archetype ? { archetype: exported.archetype } : {}),

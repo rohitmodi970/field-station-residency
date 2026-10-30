@@ -13,7 +13,7 @@ import { Feather } from '@expo/vector-icons';
 import type { Point } from '../../data/residency';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const SWIPE_THRESHOLD = 80;
+const SWIPE_THRESHOLD = 48;
 
 interface SwipeCardProps {
   point: Point;

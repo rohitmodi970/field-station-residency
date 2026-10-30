@@ -95,14 +95,18 @@ function YouMap() {
 // peek: once, on arrival, the card shows you both sides by itself, the way iOS Mail does.
 function Swipe({ onRight, onLeft, right, left, children, className = "", style, peek }: { onRight?: () => void; onLeft: () => void; right?: string; left: string; children: React.ReactNode; className?: string; style?: React.CSSProperties; peek?: boolean }) {
   const x = useMotionValue(0);
-  const dragged = useRef(false); // a drag that ends over a button isn't a tap on it
+  const dragged = useRef(false);
+  const lastDragEnd = useRef(0); // blocks synthetic mobile clicks from triggering child buttons
+
   useEffect(() => {
     if (!peek) return;
     const id = setTimeout(() => animate(x, [0, 84, 84, 0, -84, -84, 0], { duration: 2.6, times: [0, 0.16, 0.34, 0.5, 0.66, 0.84, 1], ease: "easeInOut" }), 900);
     return () => clearTimeout(id);
   }, [peek, x]);
-  const rightA = useTransform(x, [0, 72], [0, 1]);
-  const leftA = useTransform(x, [-72, 0], [1, 0]);
+
+  const rightA = useTransform(x, [0, 50], [0, 1]);
+  const leftA = useTransform(x, [-50, 0], [1, 0]);
+
   return (
     <div className="relative rounded-[28px]">
       {onRight && (
@@ -117,27 +121,58 @@ function Swipe({ onRight, onLeft, right, left, children, className = "", style, 
         className={`relative ${className}`}
         style={{ x, touchAction: "pan-y", ...style }}
         drag="x"
+        dragDirectionLock={true}
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={{ left: 0.6, right: onRight ? 0.6 : 0.05 }}
-        onDragStart={() => (dragged.current = true)}
+        dragElastic={{ left: 0.7, right: onRight ? 0.7 : 0.05 }}
+        onDragStart={() => {
+          dragged.current = true;
+        }}
         onClickCapture={(e) => {
-          if (!dragged.current) return;
-          e.stopPropagation();
-          e.preventDefault();
+          // Prevent synthetic click from firing on children (e.g. edit button) right after a swipe drag
+          if (dragged.current || Date.now() - lastDragEnd.current < 400) {
+            e.stopPropagation();
+            e.preventDefault();
+          }
         }}
         onDragEnd={(_, i) => {
-          setTimeout(() => (dragged.current = false), 0);
-          if (onRight && (i.offset.x > 72 || i.velocity.x > 500)) {
+          lastDragEnd.current = Date.now();
+          setTimeout(() => {
+            dragged.current = false;
+          }, 400);
+
+          // Calibrated thresholds for mobile thumbs (40px offset or 200px/s flick)
+          const isRight = onRight && (i.offset.x > 40 || i.velocity.x > 200);
+          const isLeft = i.offset.x < -40 || i.velocity.x < -200;
+
+          if (isRight) {
             haptic("done");
+            animate(x, 0, { type: "spring", stiffness: 450, damping: 30 });
             onRight();
-          } else if (i.offset.x < -72 || i.velocity.x < -500) {
+          } else if (isLeft) {
             haptic("soft");
+            animate(x, 0, { type: "spring", stiffness: 450, damping: 30 });
             onLeft();
+          } else {
+            animate(x, 0, { type: "spring", stiffness: 450, damping: 30 });
           }
         }}
       >
         {children}
       </motion.div>
+      {/* The same choices without a swipe, for keyboards and screen readers */}
+      <span className="sr-only">
+        {onRight && (
+          <button type="button" onClick={onRight}>
+            {right}
+          </button>
+        )}
+        <button type="button" onClick={onLeft}>
+          {left}
+        </button>
+      </span>
+    </div>
+  );
+}
       {/* The same choices without a swipe, for keyboards and screen readers */}
       <span className="sr-only">
         {onRight && (

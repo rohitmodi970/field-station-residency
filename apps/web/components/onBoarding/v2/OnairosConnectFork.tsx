@@ -93,22 +93,16 @@ export default function OnairosConnectFork({
 
   // Connect with accounts via Onairos SDK
   const handleRealConnectComplete = async (result: any) => {
-    // ── Diagnostic dump — log every top-level key in the SDK result ───────────
-    console.group('🎉 [OnairosConnectFork] Full SDK result dump');
-    console.log('Top-level keys:', result ? Object.keys(result) : 'null/undefined');
-    console.log('result.token:', result?.token ? `${String(result.token).slice(0, 20)}…` : 'MISSING');
-    console.log('result.apiUrl:', result?.apiUrl || 'MISSING');
-    console.log('result.apiResponse:', result?.apiResponse);
-    console.log('result.userData:', result?.userData);
-    console.log('result.userDataSummary:', result?.userDataSummary);
-    console.log('result.connectedSources:', result?.connectedSources);
-    console.log('result.ascendContext:', result?.ascendContext);
-    console.log('result.approvedData:', result?.approvedData);
-    console.log('result.success:', result?.success);
-    console.log('result.simulated:', result?.simulated);
-    console.log('result.cancelled:', result?.cancelled);
-    console.log('result.error:', result?.error);
-    console.groupEnd();
+    console.info('[OnairosConnectFork] SDK flow completed', {
+      success: result?.success === true,
+      cancelled: result?.cancelled === true,
+      hasApiResponse: !!result?.apiResponse,
+      connectedSourceCount: Array.isArray(result?.connectedSources)
+        ? result.connectedSources.length
+        : 0,
+      hasToken: Boolean(result?.token),
+      hasApiUrl: Boolean(result?.apiUrl),
+    });
 
     setRawOnairosResult(result); // DEBUG: capture raw SDK result
     // Fire raw event hook immediately — before any processing
@@ -156,7 +150,10 @@ export default function OnairosConnectFork({
             Authorization: `Bearer ${result.token}`,
             'Content-Type': 'application/json',
           },
-          // No body — per Onairos docs, POST to apiUrl with only Authorization header
+          body: JSON.stringify({
+            accessToken: result.token || result.accessToken || '',
+            token: result.token || result.accessToken || '',
+          }),
         });
         if (fallbackRes.ok) {
           apiResponse = await fallbackRes.json();
