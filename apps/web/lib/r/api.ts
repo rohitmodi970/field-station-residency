@@ -13,7 +13,6 @@
 //   POST /api/residency/onairos              onairos()      (logs & normalizes persona)
 
 import cohort from "@/contract/fixtures/cohort.json";
-import onairosSample from "@/contract/fixtures/onairos-general.json";
 import { normalizeOnairos, personId, projectGraph, synthesize as localSynth, visible, type Connection, type Finding, type Graph, type OnairosNormalized, type Snapshot, type SynthInput } from "@/contract/residency";
 
 const BASE = process.env.NEXT_PUBLIC_RESIDENCY_API?.replace(/\/$/, "") ?? "";
@@ -46,41 +45,37 @@ async function call<T>(path: string, body?: unknown): Promise<T> {
 export const COHORT = cohort.snapshots as Snapshot[];
 const REVIEWED = cohort.connections as Connection[];
 
-// Onairos: hands its payload to POST /api/residency/onairos for server-side logging and normalization.
+// Onairos: hands real live payload to POST /api/residency/onairos for server-side logging and normalization.
 export async function onairos(raw?: unknown, name?: string, residentId?: string): Promise<OnairosNormalized> {
-  console.log("🧩 [API] onairos() called. Raw payload:", raw ? "PRESENT (from Onairos Widget)" : "NONE (will use sample)");
+  console.log("🧩 [API] onairos() called. Raw payload:", raw ? "PRESENT (from Onairos Widget)" : "NONE");
+  if (!raw || (typeof raw === "object" && Object.keys(raw).length === 0)) {
+    throw new Error("No real Onairos data provided");
+  }
+
   try {
     const res = await call<any>("/api/residency/onairos", {
       raw,
-      isSample: raw === undefined,
       name,
       resident_id: residentId,
     });
+    if (res?.persona && Array.isArray(res.persona.positive) && res.persona.positive.length > 0) {
+      console.log("✅ [API:Onairos] Received normalized real persona from server:", res.persona);
+      return res.persona;
+    }
     if (res?.persona) {
-      console.log("✅ [API:Onairos] Received normalized persona from server:", res.persona);
       return res.persona;
     }
   } catch (e: any) {
     console.warn("⚠️ [API:Onairos] Server logging call note, falling back to local normalizer:", e?.message || e);
   }
 
-  if (raw !== undefined) {
-    const n = normalizeOnairos(raw);
-    if (!n) {
-      console.warn("⚠️ [API:Onairos] Failed to normalize payload");
-      throw new Error("Onairos sent something Force couldn't read");
-    }
-    console.log("✅ [API:Onairos] Locally normalized persona:", n);
-    return n;
+  const n = normalizeOnairos(raw);
+  if (!n) {
+    console.warn("⚠️ [API:Onairos] Failed to normalize real Onairos payload");
+    throw new Error("Onairos sent data that could not be parsed into personality traits");
   }
-  await wait(1400);
-  if (flag("onairos")) {
-    console.warn("⚠️ [API:Onairos] Simulating failure via ?onairos=fail");
-    throw new Error("Onairos didn't answer");
-  }
-  const norm = normalizeOnairos(onairosSample, true)!;
-  console.log("✅ [API:Onairos] Using fixture sample:", norm);
-  return norm;
+  console.log("✅ [API:Onairos] Locally normalized real persona:", n);
+  return n;
 }
 
 export async function synthesize(input: SynthInput): Promise<Snapshot> {

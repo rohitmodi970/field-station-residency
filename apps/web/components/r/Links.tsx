@@ -239,8 +239,7 @@ export function OnairosCard({ className = "", id = "onairos" }: { className?: st
               r.connectOnairos(raw?.apiResponse || raw);
             }}
             onError={(err) => {
-              console.warn("⚠️ [DATA INTAKE: Onairos Widget] Skipped / not signed in, using sample fallback:", err);
-              r.connectOnairos();
+              console.warn("⚠️ [DATA INTAKE: Onairos Widget] Connection was not completed:", err);
             }}
           />
         </div>

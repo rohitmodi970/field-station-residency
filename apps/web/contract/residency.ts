@@ -202,31 +202,48 @@ const traits = (o?: any): Trait[] => {
 const PLATFORMS: Record<string, string> = { youtube: "YouTube", chatgpt: "ChatGPT", reddit: "Reddit", instagram: "Instagram", linkedin: "LinkedIn", x: "X", twitter: "X", pinterest: "Pinterest", spotify: "Spotify", gmail: "Gmail" };
 const platformName = (k: string) => PLATFORMS[k.toLowerCase()] ?? k.charAt(0).toUpperCase() + k.slice(1);
 
-export function normalizeOnairos(raw: unknown, fixture = false): OnairosNormalized | null {
+export function normalizeOnairos(raw: unknown): OnairosNormalized | null {
   if (!raw || typeof raw !== "object") return null;
   const anyRaw = raw as any;
-  const r = (anyRaw.DataAnalysis ? anyRaw : anyRaw.data?.DataAnalysis ? anyRaw.data : anyRaw.result?.DataAnalysis ? anyRaw.result : anyRaw) as OnairosGeneral;
-  const p = r.DataAnalysis?.personality_traits || (anyRaw.personality_traits ? anyRaw : null)?.personality_traits || anyRaw.personality_traits || (anyRaw.positive_traits || anyRaw.user_summary ? anyRaw : null);
+  const payload = anyRaw.apiResponse || anyRaw.data || anyRaw.result || anyRaw;
+  const r = (payload.DataAnalysis ? payload : anyRaw.DataAnalysis ? anyRaw : payload) as OnairosGeneral;
+  const p = payload.traits ||
+            payload.userTraits?.DataAnalysis?.personality_traits ||
+            payload.InferenceResult?.traits?.personality_traits ||
+            r.DataAnalysis?.personality_traits || 
+            (payload.personality_traits ? payload : null)?.personality_traits || 
+            payload.personality_traits || 
+            anyRaw.traits ||
+            anyRaw.userTraits?.DataAnalysis?.personality_traits ||
+            (payload.positive_traits || payload.user_summary ? payload : null) ||
+            (anyRaw.positive_traits || anyRaw.user_summary ? anyRaw : null);
   if (!p) return null;
-  const m = r.metadata ?? anyRaw.metadata ?? {};
+  const profile = payload.userProfile || anyRaw.userProfile || p;
+  const m = payload.userTraits?.metadata || 
+            anyRaw.userTraits?.metadata || 
+            r.metadata ?? payload.metadata ?? anyRaw.metadata ?? {};
   const str = (s?: string) => (typeof s === "string" && s.trim() ? s.trim() : null);
+  const rawPlatforms = (Object.keys(m.platform_breakdown ?? {}).length > 0
+    ? Object.keys(m.platform_breakdown ?? {})
+    : (anyRaw.connectedPlatforms || payload.connectedPlatforms || [])
+  );
   return {
     positive: traits(p.positive_traits ?? p.positive),
     private_growth: traits(p.traits_to_improve ?? p.private_growth),
-    summary: str(p.user_summary ?? p.summary),
-    explanation: str(p.top_traits_explanation ?? p.explanation),
-    archetype: str(p.archetype),
-    nudges: (p.nudges ?? []).map((n: any) => str(typeof n === "string" ? n : n?.text)).filter((t: string | null): t is string => !!t),
+    summary: str(p.user_summary ?? profile.user_summary ?? p.summary),
+    explanation: str(p.top_traits_explanation ?? profile.top_traits_explanation ?? p.explanation),
+    archetype: str(p.archetype ?? profile.archetype),
+    nudges: (p.nudges ?? profile.nudges ?? []).map((n: any) => str(typeof n === "string" ? n : n?.text)).filter((t: string | null): t is string => !!t),
     coverage: {
       analyzed: typeof m.total_items_analyzed === "number" ? m.total_items_analyzed : null,
       sampled: typeof m.items_sampled === "number" ? m.items_sampled : null,
       label: str(m.coverage ?? m.coverage_label ?? (m.label ? String(m.label) : null)),
-      platforms: Object.keys(m.platform_breakdown ?? {}).map(platformName),
+      platforms: rawPlatforms.map(platformName),
     },
     sources: Object.entries(m.platform_breakdown ?? {})
       .map(([k, v]) => ({ platform: platformName(k), summary: str((v as { summary?: string })?.summary) ?? "" }))
       .filter((x) => x.summary),
-    fixture,
+    fixture: false,
   };
 }
 

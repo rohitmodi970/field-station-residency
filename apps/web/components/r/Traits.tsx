@@ -91,7 +91,7 @@ export default function Traits({ p, who, children }: { p: OnairosNormalized; who
     <section className="mt-8">
       <h3 className="mb-3 flex items-center gap-2 px-1 t-body font-medium text-ink">
         <Glass size={26} art="dusk" x={40} y={55} zoom={300} /> {mine ? "How you come across" : `How ${who} comes across`}
-        <span className="t-meta font-normal text-ink-3">{p.fixture ? "Onairos · sample data" : "Onairos"}</span>
+        <span className="t-meta font-normal text-ink-3">Onairos</span>
       </h3>
       <div className="overflow-hidden rounded-[28px] bg-paper" style={{ boxShadow: "var(--lift-1)" }}>
         <div className="relative">

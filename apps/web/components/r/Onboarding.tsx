@@ -173,7 +173,7 @@ function Talk({ onNext }: { onNext: () => void }) {
     (async () => {
       const first = name.trim().split(/\s+/)[0];
       const looking = useR.getState().footprint.status === "busy";
-      await say(`${first ? `Hi ${first}. ` : ""}Three questions about what you want from the residency. Tap the bubble and talk, or type if you'd rather. About five minutes in all.${looking ? " While we talk, I'm reading what's public about you." : ""}`, 350);
+      await say(`${first ? `Hi ${first}. ` : ""}Three questions so we get to know you better. Tap the bubble and talk, or type if you'd rather. About five minutes in all.${looking ? " While we talk, I'm reading what's public about you." : ""}`, 350);
       await say(QUESTIONS[0], 500);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once

@@ -254,27 +254,13 @@ Return strictly valid JSON with no markdown wrapping:
     problem: finalProblem,
     approach: finalApproach,
     // Onairos persona intelligence fields (replacing current_frontier and contribution)
-    archetype: onairos?.archetype || 'Creative Explorer',
-    positive_traits: onairos?.positive_traits || [
-      { trait: 'Creative Problem Solving', score: 92, evidence: 'Exploratory problem-solving patterns' },
-      { trait: 'Science and Technology Enthusiasm', score: 88, evidence: 'Technical curiosity and systems thinking' },
-      { trait: 'Community Engagement', score: 85, evidence: 'Active collaborative participation' },
-      { trait: 'Visual Storytelling', score: 78, evidence: 'Narrative and expressive framing' },
-    ],
-    user_summary: onairos?.user_summary || 'You are a curious, creative individual who learns by exploring multiple disciplines, combining analytical depth with visual and narrative expression.',
-    top_traits_explanation: onairos?.top_traits_explanation || 'Your positive traits reflect a strong pattern of exploratory problem-solving and cross-pollination between technical systems and creative community engagement.',
-    nudges: onairos?.nudges || [
-      { text: "You're highly analytical — try journaling a decision you're mulling over." },
-      { text: "Consider dedicating time to purely enjoyable, less analytical activities — it can refresh your perspective." },
-    ],
+    archetype: onairos?.archetype || 'Resident',
+    positive_traits: onairos?.positive_traits || [],
+    user_summary: onairos?.user_summary || '',
+    top_traits_explanation: onairos?.top_traits_explanation || '',
+    nudges: onairos?.nudges || [],
     onairos_metadata: onairos?.metadata || {
-      total_items_analyzed: 847,
-      items_sampled: 420,
-      coverage: '66.7%',
-      platform_breakdown: {
-        reddit: { summary: 'Strong community, technology, and learning interests.' },
-        youtube: { summary: 'Creative tutorials, music discovery, and long-form explainers.' },
-      },
+      platform_breakdown: {},
     },
     current_frontier: finalFrontier,
     contribution: finalContribution,

@@ -36,7 +36,7 @@ interface OnairosSdkConnectorProps {
   testMode?: boolean;
   allowedPlatforms?: string[] | null;
   webpageName?: string;
-  requestData?: string[];
+  requestData?: Record<string, { type: string; reward: string }> | string[];
   buttonText?: string;
   onComplete: (data: any, exported?: OnairosExportedData) => void;
   onError?: (err: any) => void;
@@ -62,7 +62,9 @@ export default function OnairosSdkConnector({
   testMode = false,
   allowedPlatforms = null,
   webpageName = 'Force',
-  requestData = ['preferences', 'personality'],
+  requestData = {
+    personality: { type: 'personality', reward: 'Personalized experience' },
+  },
   buttonText,
   onComplete,
   onError,

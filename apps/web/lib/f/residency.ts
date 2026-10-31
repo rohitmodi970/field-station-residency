@@ -52,8 +52,12 @@ const load = (): R => {
     const s = localStorage.getItem(KEY);
     if (!s) return fresh();
     const o = JSON.parse(s) as Partial<R>;
+    // Discard any stale mock/fixture persona from prior test sessions
+    const hasMockData = o.persona?.fixture || (o.persona?.summary && o.persona.summary.includes("curious, creative individual who learns by exploring"));
+    const cleanPersona = hasMockData ? null : (o.persona ?? null);
+    const cleanOnairos = cleanPersona ? (o.onairos === "on" ? "on" : "off") : "off";
     // Work that was in flight when the page closed isn't any more.
-    return { ...fresh(), ...o, uniqueId: o.uniqueId || o.me || id(), email: o.email || '', clips: [], linking: false, footprint: o.footprint?.status === "busy" ? { status: "idle", findings: [], read: [] } : (o.footprint ?? fresh().footprint), onairos: o.onairos === "on" ? "on" : o.onairos === "busy" ? "off" : (o.onairos ?? "off"), synth: o.synth === "busy" ? (o.snapshot ? "idle" : "failed") : (o.synth ?? "idle") };
+    return { ...fresh(), ...o, persona: cleanPersona, onairos: cleanOnairos, uniqueId: o.uniqueId || o.me || id(), email: o.email || '', clips: [], linking: false, footprint: o.footprint?.status === "busy" ? { status: "idle", findings: [], read: [] } : (o.footprint ?? fresh().footprint), synth: o.synth === "busy" ? (o.snapshot ? "idle" : "failed") : (o.synth ?? "idle") };
   } catch {
     return fresh();
   }
@@ -170,6 +174,10 @@ export const r = {
   },
   // The real Onairos button hands its payload in as raw; without it, the labelled sample.
   async connectOnairos(raw?: unknown) {
+    if (!raw) {
+      console.warn("⚠️ [Onairos] connectOnairos aborted: No real payload provided.");
+      return;
+    }
     if (get().onairos === "busy" || get().onairos === "on") return;
     set({ onairos: "busy" });
     console.log("🧩 [DATA INTAKE: Onairos] Connecting...", {
