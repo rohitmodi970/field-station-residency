@@ -44,7 +44,17 @@ export async function getResidencySnapshot(
       .maybeSingle();
 
     if (!error && data) {
-      return data as ResidencyIntentSnapshot;
+      const row = data as any;
+      const ctx = row.normalized_onairos_context || {};
+      return {
+        ...row,
+        archetype: row.archetype || ctx.archetype || undefined,
+        positive_traits: row.positive_traits || ctx.positive_traits || undefined,
+        user_summary: row.user_summary || ctx.user_summary || undefined,
+        top_traits_explanation: row.top_traits_explanation || ctx.top_traits_explanation || undefined,
+        nudges: row.nudges || ctx.nudges || undefined,
+        onairos_metadata: row.onairos_metadata || ctx.onairos_metadata || undefined,
+      } as ResidencyIntentSnapshot;
     }
   } catch (e) {
     // Ignore schema cache errors
@@ -137,7 +147,7 @@ export async function saveResidencySnapshot(
 
   // 1. Attempt to upsert into dedicated table
   try {
-    await supabase
+    const { error: dedicatedErr } = await supabase
       .from('residency_intent_snapshots')
       .upsert(
         {
@@ -151,18 +161,20 @@ export async function saveResidencySnapshot(
           approach: snapshot.approach || [],
           current_frontier: snapshot.current_frontier || '',
           contribution: snapshot.contribution || { can_offer: [], seeking: [] },
-          archetype: snapshot.archetype || null,
-          positive_traits: snapshot.positive_traits || null,
-          user_summary: snapshot.user_summary || null,
-          top_traits_explanation: snapshot.top_traits_explanation || null,
-          nudges: snapshot.nudges || null,
-          onairos_metadata: snapshot.onairos_metadata || null,
           next_step: snapshot.next_step || {},
           provenance: snapshot.provenance || {},
           social_links: snapshot.social_links || {},
           raw_answers: snapshot.raw_answers || {},
           word_allocation: snapshot.word_allocation || {},
-          normalized_onairos_context: snapshot.normalized_onairos_context || (snapshot as any).onairosContext || {},
+          normalized_onairos_context: {
+            ...(snapshot.normalized_onairos_context || (snapshot as any).onairosContext || {}),
+            archetype: snapshot.archetype || null,
+            positive_traits: snapshot.positive_traits || null,
+            user_summary: snapshot.user_summary || null,
+            top_traits_explanation: snapshot.top_traits_explanation || null,
+            nudges: snapshot.nudges || null,
+            onairos_metadata: snapshot.onairos_metadata || null,
+          },
           status: snapshot.status,
           sharing_consent: snapshot.sharing_consent ?? false,
           user_feedback: snapshot.user_feedback,
@@ -171,6 +183,9 @@ export async function saveResidencySnapshot(
         },
         { onConflict: 'user_id,cohort_id' }
       );
+    if (dedicatedErr) {
+      console.warn('[ResidencyStore] Dedicated table save warning:', dedicatedErr.message);
+    }
   } catch (e: any) {
     console.warn('[ResidencyStore] Dedicated table save notice:', e?.message);
   }
