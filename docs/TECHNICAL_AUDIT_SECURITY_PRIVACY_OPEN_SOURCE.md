@@ -141,3 +141,4 @@ Current verified production database statistics:
 * **Distinct Residents / Cohort Participants**: `11` (including active profiles for Srinjoy, Arushi Upmanyu, Shriyanshi, Shrishti, Disha, megabyte, Hiro, Abhinav Dey, Shardul, Rohit Modi)
 * **Total Residency Answer Entries Recorded**: `97`
 * **Real Onairos Ingestion**: Active and verified live with real multi-platform inference (`100%` coverage across LinkedIn, Reddit, YouTube, generating archetypes such as *"Ambitious Builder"* and *"Aesthetic Architect"*).
+
