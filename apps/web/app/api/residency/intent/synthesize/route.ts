@@ -4,7 +4,7 @@
 // Written by Claude Haiku 4.5; otherwise, or if it fails, the plain draft.
 
 import cohort from "@/contract/fixtures/cohort.json";
-import { synthesize, visible, type Snapshot, type SynthInput } from "@/contract/residency";
+import { synthesize, visible, QUESTIONS, type Snapshot, type SynthInput } from "@/contract/residency";
 import { hasClaude, readSnapshot, readFootprint } from "@/server/claude";
 import { saveResidencySnapshot, saveOnairosData } from "@/lib/residency/residencyStore";
 import { createAdminClient } from "@/utils/supabase/admin";
@@ -226,12 +226,8 @@ export async function POST(req: Request) {
       );
       console.log(`💾 [Synthesize] Persisted participant profile to residency_participants: ${residentId}`);
 
-      // Upsert residency_entries for onboarding answers
-      const qTitles = [
-        "What I'm working on here",
-        "The part I keep coming back to",
-        "What makes this residency a win",
-      ];
+      // Upsert residency_entries for onboarding answers using canonical question prompts
+      const qTitles = QUESTIONS;
       for (let i = 0; i < answers.length; i++) {
         const text = answers[i]?.trim();
         if (!text) continue;
